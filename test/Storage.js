@@ -39,21 +39,43 @@ describe("Storage", () => {
         storage.config.should.have.property('connections');
       });
     });
+    it("should register a gather for models", () => {
+      return app.emit('load').with().then(() => {
+        app.get.calledWith('storage').should.be.true;
+        app.get().gather.calledWith('model').should.be.true;
+      });
+    })
+    it("should register a handler for getModel", () => {
+      return app.emit('load').with().then(() => {
+        app.get().on.calledWith('getModel').should.be.true;
+      });
+    })
   });
   describe("Models", () => {
     beforeEach(() => {
+      
       storage = new Storage(app);
-      var Dummy = Storage.Waterline({
-        identity: 'dummy'
+      var Dummy = Storage.Waterline.Collection.extend({
+        identity: 'dummy',
+        connection: 'default',
+        attributes: {
+          name: 'string'
+        }
       });
-      app.get('storage').send('registerModel').with(Dummy);
+      // Shortcut around gather stub
+      storage._registerModel(Dummy)
       return app.launch();
     });
 
-    it("should gather models", () => {
+    it("should have a collection of models", () => {
       storage.collections.should.not.be.null;
       storage.connections.should.not.be.null;
       storage.collections.should.have.property('dummy');
+    });
+    it("should return model by identity", () => {
+      var dummy = storage._getModel('dummy');
+      dummy.should.exist;
+      dummy.identity.should.equal('dummy');
     });
 
   });

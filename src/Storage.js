@@ -24,8 +24,8 @@ class Storage {
     
     app.once('load', () => {
 
-      app.get('storage').gather('registerModel').each(this._registerModel.bind(this));
-//      app.get('storage').on('getModel', this._getModel.bind(this));
+      app.get('storage').gather('model').each(this._registerModel.bind(this));
+      app.get('storage').on('getModel', this._getModel.bind(this));
       
       this.config = Object.assign(_defaultConfig, app.config.storage);
       
