@@ -3,6 +3,10 @@
 import Waterline from 'waterline'
 import Promise from 'bluebird'
 
+import path from 'path'
+import fs_ from 'fs'
+const fs = Promise.promisifyAll(fs_);
+
 const _defaultConfig = {
   adapters: {
     'default': 'sails-memory'
@@ -21,6 +25,7 @@ class Storage {
     this.waterlineConfig = null;
     this.collections = null;
     this.connections = null;
+    this.app = app;
     
     app.once('load', () => {
 
@@ -39,7 +44,17 @@ class Storage {
   }
 
   _loadLocalModels () {
-    // TODO
+    var dir = this.config.modelsDir;
+    try {
+      fs.accessSync(dir);
+    } catch (e) {
+      return;
+    }
+    return fs.readdirAsync(dir).each((file) => {
+      var p = path.resolve(path.join(dir,path.basename(file, '.js')));
+      var m = require(p);
+      this.app.get('storage').emit('model').with(m);
+    });
   }
 
   _connectDb () {

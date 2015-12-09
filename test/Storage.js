@@ -79,4 +79,19 @@ describe("Storage", () => {
     });
 
   });
+  describe("Local Models", () => {
+    beforeEach(() => {
+      app.config.storage = {
+        modelsDir: './test/models'
+      }
+      storage = new Storage(app);
+      return app.launch();
+    });
+
+    it("should register local models", () => {
+      app.get().emit.calledOnce.should.be.true;
+      app.get().emit.calledWith('model').should.be.true;
+      app.get().emit().with.called.should.be.true;
+    });
+  });
 });
