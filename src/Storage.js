@@ -2,6 +2,7 @@
 
 import Waterline from 'waterline'
 import Promise from 'bluebird'
+import _ from 'underscore'
 
 import path from 'path'
 import fs_ from 'fs'
@@ -11,7 +12,7 @@ const REGEX_FILE = /[^\/\~]$/;
 
 const _defaultConfig = {
   adapters: {
-    'default': 'sails-memory'
+    'default': {}
   },
   connections: {
     'default': {
@@ -35,7 +36,10 @@ class Storage {
     app.get('storage').on('getModel', this._getModel.bind(this));
 
     app.once('load', () => {
-      return this._loadLocalModels();
+      return Promise.all([
+        this._setupAdapter(),
+        this._loadLocalModels()
+      ]);
     });
 
     app.once('startup.before', () => {
@@ -58,6 +62,14 @@ class Storage {
         this.app.get('storage').send('model').with(m);
       }
     });
+  }
+
+  _setupAdapter () {
+    for (var key in this.config.adapters) {
+      if (_.isString(this.config.adapters[key])) {
+        this.config.adapters[key] = require(this.config.adapters[key]);
+      }
+    }
   }
 
   _connectDb () {

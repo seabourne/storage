@@ -94,4 +94,19 @@ describe("Storage", () => {
       app.get().send().with.called.should.be.true;
     });
   });
+  describe("Dynamic Adapter", () => {
+    beforeEach(() => {
+      app.config.storage = {
+        adapters: {
+          "default": "sails-memory"
+        }
+      }
+      storage = new Storage(app);
+      return app.launch();
+    });
+
+    it("should have required the adapter", () => {
+      storage.config.adapters["default"].should.have.property("identity", "sails-memory");
+    });
+  });
 });
