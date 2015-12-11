@@ -7,6 +7,8 @@ import path from 'path'
 import fs_ from 'fs'
 const fs = Promise.promisifyAll(fs_);
 
+const REGEX_FILE = /[^\/\~]$/;
+
 const _defaultConfig = {
   adapters: {
     'default': 'sails-memory'
@@ -27,13 +29,12 @@ class Storage {
     this.connections = null;
     this.app = app;
     
-    app.once('load', () => {
+    this.config = Object.assign(_defaultConfig, app.config.storage);
 
-      app.get('storage').gather('model').each(this._registerModel.bind(this));
-      app.get('storage').on('getModel', this._getModel.bind(this));
-      
-      this.config = Object.assign(_defaultConfig, app.config.storage);
-      
+    app.get('storage').gather('model').each(([model]) => { this._registerModel(model)});
+    app.get('storage').on('getModel', this._getModel.bind(this));
+
+    app.once('load', () => {
       return this._loadLocalModels();
     });
 
@@ -44,16 +45,18 @@ class Storage {
   }
 
   _loadLocalModels () {
-    var dir = this.config.modelsDir;
+    var dir = path.resolve(this.config.modelsDir);
     try {
       fs.accessSync(dir);
     } catch (e) {
       return;
     }
     return fs.readdirAsync(dir).each((file) => {
-      var p = path.resolve(path.join(dir,path.basename(file, '.js')));
-      var m = require(p);
-      this.app.get('storage').emit('model').with(m);
+      if (REGEX_FILE.test(file)) {
+        var p = path.resolve(path.join(dir,path.basename(file, '.js')));
+        var m = require(p);
+        this.app.get('storage').send('model').with(m);
+      }
     });
   }
 

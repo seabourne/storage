@@ -89,9 +89,9 @@ describe("Storage", () => {
     });
 
     it("should register local models", () => {
-      app.get().emit.calledOnce.should.be.true;
-      app.get().emit.calledWith('model').should.be.true;
-      app.get().emit().with.called.should.be.true;
+      app.get().send.calledOnce.should.be.true;
+      app.get().send.calledWith('model').should.be.true;
+      app.get().send().with.called.should.be.true;
     });
   });
 });
