@@ -1,6 +1,6 @@
 {
   "name": "@nxus/storage",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Storage framework for Nxus applications",
   "main": "lib/Storage.js",
   "scripts": {
@@ -31,10 +31,10 @@
     "waterline": "^0.10.28"
   },
   "peerDependencies": {
-    "@nxus/core": "^2.0.0"
+    "@nxus/core": "^2.1.0"
   },
   "devDependencies": {
-    "@nxus/core": "^2.0.0",
+    "@nxus/core": "^2.1.0",
     "babel": "^5.6.23",
     "chai": "^3.4.1",
     "chai-as-promised": "^5.1.0",
