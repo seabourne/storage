@@ -73,6 +73,10 @@ class Storage {
   }
 
   _connectDb () {
+    // TODO: Nxus app restart may cause issues with reloading models
+    if (_.isObject(this.connections)) {
+      return;
+    }
     return this.waterline.initializeAsync({
       adapters: this.config.adapters,
       connections: this.config.connections
