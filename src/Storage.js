@@ -46,6 +46,10 @@ class Storage {
       return this._connectDb();
     });
 
+    app.once('stop', () => {
+      return this._disconnectDb();
+    })
+
   }
 
   _loadLocalModels () {
@@ -72,11 +76,11 @@ class Storage {
     }
   }
 
+  _disconnectDb () {
+    return this.waterline.teardownAsync();
+  }
+  
   _connectDb () {
-    // TODO: Nxus app restart may cause issues with reloading models
-    if (_.isObject(this.connections)) {
-      return;
-    }
     return this.waterline.initializeAsync({
       adapters: this.config.adapters,
       connections: this.config.connections
