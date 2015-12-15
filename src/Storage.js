@@ -32,8 +32,8 @@ class Storage {
     
     this.config = Object.assign(_defaultConfig, app.config.storage);
 
-    app.get('storage').gather('model').each(([model]) => { this._registerModel(model)});
-    app.get('storage').on('getModel', this._getModel.bind(this));
+    app.get('storage').gather('model', this._registerModel.bind(this));
+    app.get('storage').respond('getModel', this._getModel.bind(this));
 
     app.once('load', () => {
       return Promise.all([
@@ -42,7 +42,7 @@ class Storage {
       ]);
     });
 
-    app.once('startup.before', () => {
+    app.onceBefore('startup', () => {
       return this._connectDb();
     });
 
@@ -63,7 +63,7 @@ class Storage {
       if (REGEX_FILE.test(file)) {
         var p = path.resolve(path.join(dir,path.basename(file, '.js')));
         var m = require(p);
-        this.app.get('storage').send('model').with(m);
+        this.app.get('storage').provide('model', m);
       }
     });
   }

@@ -33,21 +33,21 @@ describe("Storage", () => {
     });
 
     it("should have config after load", () => {
-      return app.emit('load').with().then(() => {
+      return app.emit('load').then(() => {
         storage.should.have.property('config');
         storage.config.should.have.property('modelsDir', './src/models');
         storage.config.should.have.property('connections');
       });
     });
     it("should register a gather for models", () => {
-      return app.emit('load').with().then(() => {
+      return app.emit('load').then(() => {
         app.get.calledWith('storage').should.be.true;
         app.get().gather.calledWith('model').should.be.true;
       });
     })
     it("should register a handler for getModel", () => {
-      return app.emit('load').with().then(() => {
-        app.get().on.calledWith('getModel').should.be.true;
+      return app.emit('load').then(() => {
+        app.get().respond.calledWith('getModel').should.be.true;
       });
     })
   });
@@ -89,9 +89,8 @@ describe("Storage", () => {
     });
 
     it("should register local models", () => {
-      app.get().send.calledOnce.should.be.true;
-      app.get().send.calledWith('model').should.be.true;
-      app.get().send().with.called.should.be.true;
+      app.get().provide.calledOnce.should.be.true;
+      app.get().provide.calledWith('model').should.be.true;
     });
   });
   describe("Dynamic Adapter", () => {
