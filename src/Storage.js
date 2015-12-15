@@ -26,7 +26,7 @@ class Storage {
   constructor (app) {
     this.waterline = Promise.promisifyAll(new Waterline());
     this.waterlineConfig = null;
-    this.collections = null;
+    this.collections = {};
     this.connections = null;
     this.app = app;
     
@@ -35,14 +35,14 @@ class Storage {
     app.get('storage').gather('model', this._registerModel.bind(this));
     app.get('storage').respond('getModel', this._getModel.bind(this));
 
-    app.once('load', () => {
+    app.once('init', () => {
       return Promise.all([
         this._setupAdapter(),
         this._loadLocalModels()
       ]);
     });
 
-    app.onceBefore('startup', () => {
+    app.onceAfter('load', () => {
       return this._connectDb();
     });
 
@@ -81,20 +81,24 @@ class Storage {
   }
   
   _connectDb () {
+    console.log('connecting to dB')
     return this.waterline.initializeAsync({
       adapters: this.config.adapters,
       connections: this.config.connections
     }).then((obj) => {
-        this.connections = obj.connections;
-        this.collections = obj.collections;
-      });
+      console.log('setting collections')
+      this.connections = obj.connections;
+      this.collections = obj.collections;
+    });
   }
   
   _registerModel (model) {
+    console.log('registering model', model)
     this.waterline.loadCollection(model)
   }
 
   _getModel (id) {
+    console.log('getting model', id)
     return this.collections[id];
   }
 
