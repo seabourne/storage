@@ -29,7 +29,7 @@ class Storage {
     this.collections = {};
     this.connections = null;
     this.app = app;
-    
+
     this.config = Object.assign(_defaultConfig, app.config.storage);
 
     app.get('storage').gather('model', this._registerModel.bind(this));
@@ -84,7 +84,10 @@ class Storage {
     console.log('connecting to dB')
     return this.waterline.initializeAsync({
       adapters: this.config.adapters,
-      connections: this.config.connections
+      connections: this.config.connections,
+      defaults: {
+        migrate: 'safe',
+      }
     }).then((obj) => {
       console.log('setting collections')
       this.connections = obj.connections;
