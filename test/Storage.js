@@ -15,6 +15,7 @@ describe("Storage", () => {
   describe("Load", () => {
     it("should not be null", () => Storage.should.not.be.null)
     it("should provide waterline", () => Storage.Waterline.should.not.be.null)
+    it("should provide HasModels", () => Storage.HasModels.should.not.be.null)
 
     it("should be instantiated", () => {
       storage = new Storage(app);

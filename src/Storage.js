@@ -4,6 +4,8 @@ import Waterline from 'waterline'
 import Promise from 'bluebird'
 import _ from 'underscore'
 
+import HasModels from './HasModels'
+
 import path from 'path'
 import fs_ from 'fs'
 const fs = Promise.promisifyAll(fs_);
@@ -108,5 +110,6 @@ class Storage {
   
 }
 Storage.Waterline = Waterline;
+Storage.HasModels = HasModels;
 
 export default Storage;
