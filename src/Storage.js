@@ -34,8 +34,9 @@ class Storage {
 
     this.config = Object.assign(_defaultConfig, app.config.storage);
 
-    app.get('storage').gather('model', this._registerModel.bind(this));
-    app.get('storage').respond('getModel', this._getModel.bind(this));
+    app.get('storage').use(this)
+    this.gather('model')
+    this.respond('getModel')
 
     app.once('init', () => {
       return Promise.all([
@@ -54,6 +55,31 @@ class Storage {
 
   }
 
+  // Handlers
+
+  /**
+   * Register a model
+   * @param {object} model A Waterline-compatible model class
+   */
+  
+  model (model) {
+    console.log('registering model', model)
+    this.waterline.loadCollection(model)
+  }
+
+  /**
+   * Retrieve a model based on its identity (name)
+   * @param {string} id The identity of a registered model
+   * @return {Promise}  The model class
+   */
+  
+  getModel (id) {
+    console.log('getting model', id)
+    return this.collections[id];
+  }
+
+  // Internal
+  
   _loadLocalModels () {
     var dir = path.resolve(this.config.modelsDir);
     try {
@@ -65,7 +91,7 @@ class Storage {
       if (REGEX_FILE.test(file)) {
         var p = path.resolve(path.join(dir,path.basename(file, '.js')));
         var m = require(p);
-        this.app.get('storage').provide('model', m);
+        this.provide('model', m);
       }
     });
   }
@@ -96,17 +122,6 @@ class Storage {
       this.collections = obj.collections;
     });
   }
-  
-  _registerModel (model) {
-    console.log('registering model', model)
-    this.waterline.loadCollection(model)
-  }
-
-  _getModel (id) {
-    console.log('getting model', id)
-    return this.collections[id];
-  }
-
   
 }
 Storage.Waterline = Waterline;
