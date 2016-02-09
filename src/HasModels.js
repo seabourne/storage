@@ -7,7 +7,7 @@ export default class HasModels {
     app.on('startup', () => {
       let mods = this.model_names();
       for (let id in mods) {
-        app.get('storage').request('getModel', id).then((model) => {
+        app.get('storage').getModel(id).then((model) => {
           this.models[mods[id]] = model;
         })
       }
