@@ -1,6 +1,6 @@
 'use strict'
 
-import {Waterline} from '../../src/Storage'
+import {Waterline} from '../../src'
 
 var One = Waterline.Collection.extend({
   identity: 'one',

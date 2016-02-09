@@ -1,6 +1,6 @@
 'use strict';
 
-import Storage from '../src/Storage'
+import Storage from '../src'
 
 import TestApp from '@nxus/core/lib/test/support/TestApp';
 

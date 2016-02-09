@@ -27,6 +27,7 @@ const _defaultConfig = {
   modelsDir: './src/models'
 };
 
+/** Storage module */
 class Storage {
   constructor (app) {
     this.waterline = Promise.promisifyAll(new Waterline());
@@ -61,23 +62,25 @@ class Storage {
   // Handlers
 
   /**
-   * Register a model
+   * Provide a model
    * @param {object} model A Waterline-compatible model class
+   * @example app.get('storage').model(...)
    */
   
   model (model) {
-    console.log('registering model', model)
+    this.app.log('registering model', model.prototype.identity)
     this.waterline.loadCollection(model)
   }
 
   /**
-   * Retrieve a model based on its identity (name)
+   * Request a model based on its identity (name)
    * @param {string} id The identity of a registered model
    * @return {Promise}  The model class
+   * @example app.get('storage').getModel('user')
    */
   
   getModel (id) {
-    console.log('getting model', id)
+    this.app.log('getting model', id)
     return this.collections[id];
   }
 
@@ -112,13 +115,13 @@ class Storage {
   }
   
   _connectDb () {
-    console.log('connecting to dB')
+    this.app.log('connecting to dB', this.config.connections)
     return this.waterline.initializeAsync({
       adapters: this.config.adapters,
       connections: this.config.connections,
       defaults: this.config.defaults
     }).then((obj) => {
-      console.log('setting collections')
+      this.app.log('setting collections')
       this.connections = obj.connections;
       this.collections = obj.collections;
     });
