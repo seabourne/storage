@@ -30,13 +30,13 @@ A storage framework for Nxus applications using [waterline](https://github.com/b
        identity: 'user',
        ...
      });
-     app.get('storage').send('model').with(User)
+     app.get('storage').model(User)
      ```
  * `startup`
    * The configured database is connected during `startup.before`
    * You can query models from `startup` and beyond, retrieve the model by the 'identity':
      ```
-     app.get('storage').emit('getModel').with('user').then((User) => {
+     app.get('storage').getModel('user').then((User) => {
          User.create(...);
      });
      
