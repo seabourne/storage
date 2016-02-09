@@ -6,7 +6,7 @@
   "scripts": {
     "test": "NODE_ENV=test mocha --compilers js:babel/register -R spec",
     "compile": "babel --optional runtime -d lib/ src/",
-    "docs": "export NAME=`npm view . name`; export VERSION=`npm view . version`; ./node_modules/.bin/documentation ./src/index.js -f html -o ./docs --name $NAME --project-version $VERSION ",
+    "docs": "export NAME=`npm view . name`; export VERSION=`npm view . version`; ./node_modules/.bin/documentation ./src/index.js --github -f html -o ./docs --name $NAME --project-version $VERSION ",
     "prepublish": "npm run compile && npm run docs"
   },
   "repository": {
