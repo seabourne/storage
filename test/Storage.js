@@ -29,8 +29,9 @@ describe("Storage", () => {
 
     it("should register for app lifecycle", () => {
       app.once.called.should.be.true;
-      app.once.calledWith('load').should.be.true;
-      app.once.calledWith('startup.before').should.be.true;
+      app.onceAfter.calledWith('load').should.be.true;
+      app.once.calledWith('init').should.be.true;
+      app.once.calledWith('stop').should.be.true;
     });
 
     it("should have config after load", () => {
@@ -64,7 +65,7 @@ describe("Storage", () => {
         }
       });
       // Shortcut around gather stub
-      storage._registerModel(Dummy)
+      storage.model(Dummy)
       return app.launch();
     });
 
@@ -74,7 +75,7 @@ describe("Storage", () => {
       storage.collections.should.have.property('dummy');
     });
     it("should return model by identity", () => {
-      var dummy = storage._getModel('dummy');
+      var dummy = storage.getModel('dummy');
       dummy.should.exist;
       dummy.identity.should.equal('dummy');
     });
