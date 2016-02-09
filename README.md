@@ -1,4 +1,7 @@
 # @nxus/storage
+
+[![Build Status](https://travis-ci.org/nxus/storage.svg?branch=master)](https://travis-ci.org/nxus/storage)
+
 A storage framework for Nxus applications using [waterline](https://github.com/balderdashy/waterline).
 
 # Configuration

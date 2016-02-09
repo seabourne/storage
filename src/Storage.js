@@ -21,6 +21,9 @@ const _defaultConfig = {
       adapter: 'default',
     }
   },
+  defaults: {
+    migrate: 'alter',
+  },
   modelsDir: './src/models'
 };
 
@@ -113,9 +116,7 @@ class Storage {
     return this.waterline.initializeAsync({
       adapters: this.config.adapters,
       connections: this.config.connections,
-      defaults: {
-        migrate: 'safe',
-      }
+      defaults: this.config.defaults
     }).then((obj) => {
       console.log('setting collections')
       this.connections = obj.connections;
