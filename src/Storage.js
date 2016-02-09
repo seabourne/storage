@@ -94,7 +94,7 @@ class Storage {
       if (REGEX_FILE.test(file)) {
         var p = path.resolve(path.join(dir,path.basename(file, '.js')));
         var m = require(p);
-        this.app.get('storage').model(m);
+        this.provide('model', m);
       }
     });
   }
