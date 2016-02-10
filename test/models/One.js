@@ -1,10 +1,9 @@
 'use strict'
 
-import {Waterline} from '../../src/Storage'
+import {BaseModel} from '../../src/Storage'
 
-var One = Waterline.Collection.extend({
+var One = BaseModel.extend({
   identity: 'one',
-  connection: 'default',
   attributes: {}
 });
 
