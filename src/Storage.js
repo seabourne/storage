@@ -14,11 +14,12 @@ const REGEX_FILE = /[^\/\~]$/;
 
 const _defaultConfig = {
   adapters: {
-    'default': {}
+    'default': "sails-mongo"
   },
   connections: {
     'default': {
-      adapter: 'default',
+      "adapter": "default",
+      "url": "mongodb://localhost/nxus-app"
     }
   },
   defaults: {

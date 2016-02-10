@@ -28,7 +28,8 @@
     "babel-runtime": "^5.7.0",
     "bluebird": "^3.0.6",
     "underscore": "^1.8.3",
-    "waterline": "^0.10.28"
+    "waterline": "^0.10.28",
+    "sails-mongo": "^0.11.5"
   },
   "peerDependencies": {
     "@nxus/core": "^2.3.0"
