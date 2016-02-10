@@ -3,9 +3,32 @@ import _ from 'underscore'
 
 var BaseModel = Waterline.Collection.extend({
   connection: 'default',
+  storageModule: null,
   attributes: {
     
   },
+
+  afterCreate: function (record, next) {
+    if(this.storageModule) {
+      this.storageModule.emitModelEvent('create', this.identity, record)
+    }
+    next()
+  },
+
+  afterUpdate: function(record, next) {
+    if(this.storageModule) {
+      this.storageModule.emitModelEvent('update', this.identity, record)
+    }
+    next()
+  },
+
+  afterDestroy: function(record, next) {
+    if(this.storageModule) {
+      this.storageModule.emitModelEvent('destroy', this.identity, record)
+    }
+    next()
+  },
+  
   createOrUpdate: function(criteria, values) {
     return this.findOne(criteria).then((obj) => {
       if (obj) {
@@ -26,7 +49,7 @@ BaseModel.extend = function(protoProps, staticProps) {
   if (protoProps.attributes === undefined) {
     protoProps.attributes = {}
   }
-  protoProps.attributes = _.extend(this.prototype.attributes, protoProps.attributes)
+  protoProps.attributes = _.extend({}, this.prototype.attributes, protoProps.attributes)
   return Waterline.Collection.extend.call(this, protoProps, staticProps)
 }
 

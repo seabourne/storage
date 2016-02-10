@@ -35,6 +35,7 @@ export var BaseModel = baseModel
 
 export default class Storage {
   constructor (app) {
+    BaseModel.prototype.storageModule = this
     this.waterline = Promise.promisifyAll(new Waterline());
     this.waterlineConfig = null;
     this.collections = {};
@@ -128,6 +129,11 @@ export default class Storage {
       this.connections = obj.connections;
       this.collections = obj.collections;
     });
+  }
+
+  emitModelEvent (action, identity, record) {
+    this.emit('model.'+action, identity, record)
+    this.emit('model.'+action+'.'+identity, record)
   }
   
 }

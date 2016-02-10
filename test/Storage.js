@@ -25,6 +25,7 @@ describe("Storage", () => {
     it("should be instantiated", () => {
       storage = new Storage(app);
       storage.should.not.be.null;
+      BaseModel.prototype.storageModule.should.not.be.null
     });
   });
   describe("Init", () => {
@@ -124,8 +125,9 @@ describe("Storage", () => {
       return storage._disconnectDb()
     })
 
-    it("should have required the adapter", () => {
+    it("should have required the adapter", (done) => {
       storage.config.adapters["default"].should.have.property("identity", "sails-memory");
+      done()
     });
   });
 
@@ -156,6 +158,23 @@ describe("Storage", () => {
       two.helperMethod("xx").should.equal("xx")
       two.attributes.should.have.property('name')
       two.attributes.should.have.property('other')
+    })
+    it("should emit CRUD events", () => {
+      var one = storage.getModel('one')
+      return one.create({color: 'red'}).then((obj) => {
+        app.get('storage').emit.calledWith('model.create').should.be.true
+        app.get('storage').emit.calledWith('model.create.one').should.be.true
+        obj.color = 'blue'
+        return obj.save()
+      }).then((obj) => {
+        app.get('storage').emit.calledWith('model.update').should.be.true
+        app.get('storage').emit.calledWith('model.update.one').should.be.true
+        return obj.destroy()
+      }).then(() => {
+        app.get('storage').emit.calledWith('model.destroy').should.be.true
+        app.get('storage').emit.calledWith('model.destroy.one').should.be.true
+      })
+
     })
   });
 });

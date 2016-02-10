@@ -4,7 +4,9 @@ import {BaseModel} from '../../src/Storage'
 
 var One = BaseModel.extend({
   identity: 'one',
-  attributes: {}
+  attributes: {
+    'color': 'string',
+  }
 });
 
 export default One;
