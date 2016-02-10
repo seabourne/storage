@@ -1,8 +1,12 @@
 'use strict';
 
 import Storage from '../src/Storage'
+import {Waterline, HasModels, BaseModel} from '../src/Storage'
 
 import TestApp from '@nxus/core/lib/test/support/TestApp';
+
+import One from './models/One'
+import Two from './models/Two'
 
 describe("Storage", () => {
   var storage;
@@ -14,12 +18,14 @@ describe("Storage", () => {
   
   describe("Load", () => {
     it("should not be null", () => Storage.should.not.be.null)
-    it("should provide waterline", () => Storage.Waterline.should.not.be.null)
-    it("should provide HasModels", () => Storage.HasModels.should.not.be.null)
+    it("should provide waterline", () => Waterline.should.not.be.null)
+    it("should provide HasModels", () => HasModels.should.not.be.null)
+    it("should provide BaseModel", () => BaseModel.should.not.be.null)
 
     it("should be instantiated", () => {
       storage = new Storage(app);
       storage.should.not.be.null;
+      BaseModel.prototype.storageModule.should.not.be.null
     });
   });
   describe("Init", () => {
@@ -57,7 +63,7 @@ describe("Storage", () => {
     beforeEach(() => {
       
       storage = new Storage(app);
-      var Dummy = Storage.Waterline.Collection.extend({
+      var Dummy = BaseModel.extend({
         identity: 'dummy',
         connection: 'default',
         attributes: {
@@ -68,6 +74,10 @@ describe("Storage", () => {
       storage.model(Dummy)
       return app.launch();
     });
+
+    afterEach(() => {
+      return storage._disconnectDb()
+    })
 
     it("should have a collection of models", () => {
       storage.collections.should.not.be.null;
@@ -90,11 +100,16 @@ describe("Storage", () => {
       return app.launch();
     });
 
+    afterEach(() => {
+      return storage._disconnectDb()
+    })
+    
     it("should register local models", () => {
-      app.get().provide.calledOnce.should.be.true;
+      app.get().provide.calledTwice.should.be.true;
       app.get().provide.calledWith('model').should.be.true;
     });
   });
+  
   describe("Dynamic Adapter", () => {
     beforeEach(() => {
       app.config.storage = {
@@ -106,8 +121,60 @@ describe("Storage", () => {
       return app.launch();
     });
 
-    it("should have required the adapter", () => {
+    afterEach(() => {
+      return storage._disconnectDb()
+    })
+
+    it("should have required the adapter", (done) => {
       storage.config.adapters["default"].should.have.property("identity", "sails-memory");
+      done()
     });
+  });
+
+  describe("Model Base class", () => {
+    beforeEach(() => {
+      app.config.storage = {
+        adapters: {
+          "default": "sails-memory"
+        }
+      }
+      storage = new Storage(app);
+      storage._setupAdapter()
+      storage.model(One)
+      storage.model(Two)
+      return storage._connectDb()
+    });
+
+    afterEach(() => {
+      return storage._disconnectDb()
+    })
+    it("should return models with correct methods inherited", () => {
+      var one = storage.getModel('one')
+      var two = storage.getModel('two')
+
+      one.should.have.property("createOrUpdate")
+      two.should.have.property("createOrUpdate")
+      two.should.have.property("helperMethod")
+      two.helperMethod("xx").should.equal("xx")
+      two.attributes.should.have.property('name')
+      two.attributes.should.have.property('other')
+    })
+    it("should emit CRUD events", () => {
+      var one = storage.getModel('one')
+      return one.create({color: 'red'}).then((obj) => {
+        app.get('storage').emit.calledWith('model.create').should.be.true
+        app.get('storage').emit.calledWith('model.create.one').should.be.true
+        obj.color = 'blue'
+        return obj.save()
+      }).then((obj) => {
+        app.get('storage').emit.calledWith('model.update').should.be.true
+        app.get('storage').emit.calledWith('model.update.one').should.be.true
+        return obj.destroy()
+      }).then(() => {
+        app.get('storage').emit.calledWith('model.destroy').should.be.true
+        app.get('storage').emit.calledWith('model.destroy.one').should.be.true
+      })
+
+    })
   });
 });
