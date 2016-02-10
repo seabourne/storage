@@ -32,10 +32,10 @@
     "sails-mongo": "^0.11.5"
   },
   "peerDependencies": {
-    "@nxus/core": "^2.3.5"
+    "@nxus/core": "^2.3.6"
   },
   "devDependencies": {
-    "@nxus/core": "^2.3.5",
+    "@nxus/core": "^2.3.6",
     "babel": "^5.6.23",
     "chai": "^3.4.1",
     "chai-as-promised": "^5.1.0",
