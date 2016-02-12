@@ -1,10 +1,11 @@
 'use strict';
 
-import Waterline from 'waterline'
+import waterline from 'waterline'
 import Promise from 'bluebird'
 import _ from 'underscore'
 
-import HasModels from './HasModels'
+import hasModels from './HasModels'
+import baseModel from './BaseModel'
 
 import path from 'path'
 import fs_ from 'fs'
@@ -28,8 +29,13 @@ const _defaultConfig = {
   modelsDir: './src/models'
 };
 
-class Storage {
+export var HasModels = hasModels
+export var Waterline = waterline
+export var BaseModel = baseModel
+
+export default class Storage {
   constructor (app) {
+    BaseModel.prototype.storageModule = this
     this.waterline = Promise.promisifyAll(new Waterline());
     this.waterlineConfig = null;
     this.collections = {};
@@ -124,9 +130,10 @@ class Storage {
       this.collections = obj.collections;
     });
   }
+
+  emitModelEvent (action, identity, record) {
+    this.emit('model.'+action, identity, record)
+    this.emit('model.'+action+'.'+identity, record)
+  }
   
 }
-Storage.Waterline = Waterline;
-Storage.HasModels = HasModels;
-
-export default Storage;
