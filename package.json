@@ -1,6 +1,6 @@
 {
   "name": "@nxus/storage",
-  "version": "2.3.1",
+  "version": "2.3.2",
   "description": "Storage framework for Nxus applications",
   "main": "lib/Storage.js",
   "scripts": {
