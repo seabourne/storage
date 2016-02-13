@@ -1,3 +1,7 @@
+/**
+ * @namespace Storage
+ */
+
 'use strict';
 
 import waterline from 'waterline'
@@ -33,6 +37,9 @@ export var HasModels = hasModels
 export var Waterline = waterline
 export var BaseModel = baseModel
 
+/**
+ * Storage provides a common interface for defining models.  Uses the Waterline ORM.
+ */
 export default class Storage {
   constructor (app) {
     BaseModel.prototype.storageModule = this
@@ -73,7 +80,7 @@ export default class Storage {
    */
   
   model (model) {
-    console.log('registering model', model)
+    this.app.log.debug('Registering model', model.identity)
     this.waterline.loadCollection(model)
   }
 
@@ -84,7 +91,7 @@ export default class Storage {
    */
   
   getModel (id) {
-    console.log('getting model', id)
+    this.app.log.debug('Getting model', id)
     return this.collections[id];
   }
 
@@ -119,13 +126,13 @@ export default class Storage {
   }
   
   _connectDb () {
-    console.log('connecting to dB')
+    this.app.log.debug('Connecting to dB')
     return this.waterline.initializeAsync({
       adapters: this.config.adapters,
       connections: this.config.connections,
       defaults: this.config.defaults
     }).then((obj) => {
-      console.log('setting collections')
+      this.app.log.debug('setting collections')
       this.connections = obj.connections;
       this.collections = obj.collections;
     });

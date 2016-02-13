@@ -1,5 +1,8 @@
 'use strict'
 
+/** 
+ * The HasModels class is a Base class for defining helper classes with Models.
+ */
 export default class HasModels {
   constructor(app) {
     this.models = {}
