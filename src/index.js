@@ -75,8 +75,9 @@ export default class Storage {
   // Handlers
 
   /**
-   * Register a model
+   * Provide a model
    * @param {object} model A Waterline-compatible model class
+   * @example app.get('storage').model(...)
    */
   
   model (model) {
@@ -85,9 +86,10 @@ export default class Storage {
   }
 
   /**
-   * Retrieve a model based on its identity (name)
+   * Request a model based on its identity (name)
    * @param {string} id The identity of a registered model
    * @return {Promise}  The model class
+   * @example app.get('storage').getModel('user')
    */
   
   getModel (id) {
@@ -126,13 +128,12 @@ export default class Storage {
   }
   
   _connectDb () {
-    this.app.log.debug('Connecting to dB')
+    this.app.log.debug('Connecting to dB', this.config.connections)
     return this.waterline.initializeAsync({
       adapters: this.config.adapters,
       connections: this.config.connections,
       defaults: this.config.defaults
     }).then((obj) => {
-      this.app.log.debug('setting collections')
       this.connections = obj.connections;
       this.collections = obj.collections;
     });
