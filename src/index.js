@@ -1,10 +1,15 @@
+/**
+ * @namespace Storage
+ */
+
 'use strict';
 
-import Waterline from 'waterline'
+import waterline from 'waterline'
 import Promise from 'bluebird'
 import _ from 'underscore'
 
-import HasModels from './HasModels'
+import hasModels from './HasModels'
+import baseModel from './BaseModel'
 
 import path from 'path'
 import fs_ from 'fs'
@@ -14,11 +19,12 @@ const REGEX_FILE = /[^\/\~]$/;
 
 const _defaultConfig = {
   adapters: {
-    'default': {}
+    'default': "sails-mongo"
   },
   connections: {
     'default': {
-      adapter: 'default',
+      "adapter": "default",
+      "url": "mongodb://localhost/nxus-app"
     }
   },
   defaults: {
@@ -27,9 +33,16 @@ const _defaultConfig = {
   modelsDir: './src/models'
 };
 
-/** Storage module */
-class Storage {
+export var HasModels = hasModels
+export var Waterline = waterline
+export var BaseModel = baseModel
+
+/**
+ * Storage provides a common interface for defining models.  Uses the Waterline ORM.
+ */
+export default class Storage {
   constructor (app) {
+    BaseModel.prototype.storageModule = this
     this.waterline = Promise.promisifyAll(new Waterline());
     this.waterlineConfig = null;
     this.collections = {};
@@ -68,7 +81,7 @@ class Storage {
    */
   
   model (model) {
-    this.app.log('registering model', model.prototype.identity)
+    this.app.log.debug('Registering model', model.identity)
     this.waterline.loadCollection(model)
   }
 
@@ -80,7 +93,7 @@ class Storage {
    */
   
   getModel (id) {
-    this.app.log('getting model', id)
+    this.app.log.debug('Getting model', id)
     return this.collections[id];
   }
 
@@ -115,20 +128,20 @@ class Storage {
   }
   
   _connectDb () {
-    this.app.log('connecting to dB', this.config.connections)
+    this.app.log.debug('Connecting to dB', this.config.connections)
     return this.waterline.initializeAsync({
       adapters: this.config.adapters,
       connections: this.config.connections,
       defaults: this.config.defaults
     }).then((obj) => {
-      this.app.log('setting collections')
       this.connections = obj.connections;
       this.collections = obj.collections;
     });
   }
+
+  emitModelEvent (action, identity, record) {
+    this.emit('model.'+action, identity, record)
+    this.emit('model.'+action+'.'+identity, record)
+  }
   
 }
-Storage.Waterline = Waterline;
-Storage.HasModels = HasModels;
-
-export default Storage;

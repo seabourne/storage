@@ -1,11 +1,12 @@
 'use strict'
 
-import {Waterline} from '../../src'
+import {BaseModel} from '../../src/'
 
-var One = Waterline.Collection.extend({
+var One = BaseModel.extend({
   identity: 'one',
-  connection: 'default',
-  attributes: {}
+  attributes: {
+    'color': 'string',
+  }
 });
 
 export default One;
