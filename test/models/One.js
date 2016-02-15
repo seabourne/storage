@@ -1,6 +1,6 @@
 'use strict'
 
-import {BaseModel} from '../../src/Storage'
+import {BaseModel} from '../../src/'
 
 var One = BaseModel.extend({
   identity: 'one',

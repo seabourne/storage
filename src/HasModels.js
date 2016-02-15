@@ -18,8 +18,11 @@ export default class HasModels {
   }
 
   /**
-   * Define the model names to access
+   * Override to define the model names to access
    * @return {object} (model identifier: class attribute) pairs
+   * @example model_names() { 
+   * return {'user': 'User'}
+   * }
    */
   model_names () {
     throw this.constructor.name+".model_names not implemented"
