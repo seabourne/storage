@@ -68,6 +68,10 @@ Or just a specific model identity:
                 User.create(...);
             });
 
+## API
+
+* * *
+
 ## Storage
 
 Storage provides a common interface for defining models.  Uses the Waterline ORM.

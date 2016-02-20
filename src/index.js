@@ -63,7 +63,9 @@
  *             app.get('storage').getModel('user').then((User) => {
  *                 User.create(...);
  *             });
- * 
+ *
+ * # API
+ * -------
  */
 
 'use strict';
