@@ -2,10 +2,6 @@
 
 ## 
 
-[src/index.js:70-70](https://github.com/nxus/storage/blob/69dac53c6860a6c837a2ce0b14394088c5774550/src/index.js#L70-L70 "Source code on GitHub")
-
--   
-
 [![Build Status](https://travis-ci.org/nxus/storage.svg?branch=master)](https://travis-ci.org/nxus/storage)
 
 A storage framework for Nxus applications using [waterline](https://github.com/balderdashy/waterline).
@@ -74,13 +70,9 @@ Or just a specific model identity:
 
 ## Storage
 
-[src/index.js:108-213](https://github.com/nxus/storage/blob/69dac53c6860a6c837a2ce0b14394088c5774550/src/index.js#L108-L213 "Source code on GitHub")
-
 Storage provides a common interface for defining models.  Uses the Waterline ORM.
 
 ### getModel
-
-[src/index.js:160-163](https://github.com/nxus/storage/blob/69dac53c6860a6c837a2ce0b14394088c5774550/src/index.js#L160-L163 "Source code on GitHub")
 
 Request a model based on its identity (name)
 
@@ -98,8 +90,6 @@ Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Refe
 
 ### model
 
-[src/index.js:148-151](https://github.com/nxus/storage/blob/69dac53c6860a6c837a2ce0b14394088c5774550/src/index.js#L148-L151 "Source code on GitHub")
-
 Provide a model
 
 **Parameters**
@@ -114,13 +104,9 @@ app.get('storage').model(...)
 
 ## HasModels
 
-[src/HasModels.js:6-30](https://github.com/nxus/storage/blob/69dac53c6860a6c837a2ce0b14394088c5774550/src/HasModels.js#L6-L30 "Source code on GitHub")
-
 The HasModels class is a Base class for defining helper classes with Models.
 
 ### model\_names
-
-[src/HasModels.js:27-29](https://github.com/nxus/storage/blob/69dac53c6860a6c837a2ce0b14394088c5774550/src/HasModels.js#L27-L29 "Source code on GitHub")
 
 Override to define the model names to access
 
