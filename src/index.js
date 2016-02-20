@@ -1,45 +1,5 @@
 /**
- * @namespace Storage
- */
-
-'use strict';
-
-import waterline from 'waterline'
-import Promise from 'bluebird'
-import _ from 'underscore'
-
-import hasModels from './HasModels'
-import baseModel from './BaseModel'
-
-import path from 'path'
-import fs_ from 'fs'
-const fs = Promise.promisifyAll(fs_);
-
-const REGEX_FILE = /[^\/\~]$/;
-
-const _defaultConfig = {
-  adapters: {
-    'default': "sails-mongo"
-  },
-  connections: {
-    'default': {
-      "adapter": "default",
-      "url": "mongodb://localhost/nxus-app"
-    }
-  },
-  defaults: {
-    migrate: 'alter',
-  },
-  modelsDir: './src/models'
-};
-
-export var HasModels = hasModels
-export var Waterline = waterline
-export var BaseModel = baseModel
-
-/**
- * Storage provides a common interface for defining models.  Uses the Waterline ORM.
- * 
+ *  * 
  * [![Build Status](https://travis-ci.org/nxus/storage.svg?branch=master)](https://travis-ci.org/nxus/storage)
  * 
  * A storage framework for Nxus applications using [waterline](https://github.com/balderdashy/waterline).
@@ -105,6 +65,45 @@ export var BaseModel = baseModel
  *                 User.create(...);
  *             });
  * 
+ */
+
+'use strict';
+
+import waterline from 'waterline'
+import Promise from 'bluebird'
+import _ from 'underscore'
+
+import hasModels from './HasModels'
+import baseModel from './BaseModel'
+
+import path from 'path'
+import fs_ from 'fs'
+const fs = Promise.promisifyAll(fs_);
+
+const REGEX_FILE = /[^\/\~]$/;
+
+const _defaultConfig = {
+  adapters: {
+    'default': "sails-mongo"
+  },
+  connections: {
+    'default': {
+      "adapter": "default",
+      "url": "mongodb://localhost/nxus-app"
+    }
+  },
+  defaults: {
+    migrate: 'alter',
+  },
+  modelsDir: './src/models'
+};
+
+export var HasModels = hasModels
+export var Waterline = waterline
+export var BaseModel = baseModel
+
+/**
+ * Storage provides a common interface for defining models.  Uses the Waterline ORM.
  */
 export default class Storage {
   constructor (app) {

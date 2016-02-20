@@ -2,13 +2,9 @@
 
 ## 
 
-[src/index.js:5-5](https://github.com/nxus/storage/blob/c479bd63b26cd92d7fa87c09286db9693c91b3ac/src/index.js#L5-L5 "Source code on GitHub")
+[src/index.js:70-70](https://github.com/nxus/storage/blob/69dac53c6860a6c837a2ce0b14394088c5774550/src/index.js#L70-L70 "Source code on GitHub")
 
-## Storage
-
-[src/index.js:109-214](https://github.com/nxus/storage/blob/c479bd63b26cd92d7fa87c09286db9693c91b3ac/src/index.js#L109-L214 "Source code on GitHub")
-
-Storage provides a common interface for defining models.  Uses the Waterline ORM.
+-   
 
 [![Build Status](https://travis-ci.org/nxus/storage.svg?branch=master)](https://travis-ci.org/nxus/storage)
 
@@ -76,9 +72,15 @@ Or just a specific model identity:
                 User.create(...);
             });
 
+## Storage
+
+[src/index.js:108-213](https://github.com/nxus/storage/blob/69dac53c6860a6c837a2ce0b14394088c5774550/src/index.js#L108-L213 "Source code on GitHub")
+
+Storage provides a common interface for defining models.  Uses the Waterline ORM.
+
 ### getModel
 
-[src/index.js:161-164](https://github.com/nxus/storage/blob/c479bd63b26cd92d7fa87c09286db9693c91b3ac/src/index.js#L161-L164 "Source code on GitHub")
+[src/index.js:160-163](https://github.com/nxus/storage/blob/69dac53c6860a6c837a2ce0b14394088c5774550/src/index.js#L160-L163 "Source code on GitHub")
 
 Request a model based on its identity (name)
 
@@ -96,7 +98,7 @@ Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Refe
 
 ### model
 
-[src/index.js:149-152](https://github.com/nxus/storage/blob/c479bd63b26cd92d7fa87c09286db9693c91b3ac/src/index.js#L149-L152 "Source code on GitHub")
+[src/index.js:148-151](https://github.com/nxus/storage/blob/69dac53c6860a6c837a2ce0b14394088c5774550/src/index.js#L148-L151 "Source code on GitHub")
 
 Provide a model
 
@@ -112,13 +114,13 @@ app.get('storage').model(...)
 
 ## HasModels
 
-[src/HasModels.js:6-30](https://github.com/nxus/storage/blob/c479bd63b26cd92d7fa87c09286db9693c91b3ac/src/HasModels.js#L6-L30 "Source code on GitHub")
+[src/HasModels.js:6-30](https://github.com/nxus/storage/blob/69dac53c6860a6c837a2ce0b14394088c5774550/src/HasModels.js#L6-L30 "Source code on GitHub")
 
 The HasModels class is a Base class for defining helper classes with Models.
 
 ### model\_names
 
-[src/HasModels.js:27-29](https://github.com/nxus/storage/blob/c479bd63b26cd92d7fa87c09286db9693c91b3ac/src/HasModels.js#L27-L29 "Source code on GitHub")
+[src/HasModels.js:27-29](https://github.com/nxus/storage/blob/69dac53c6860a6c837a2ce0b14394088c5774550/src/HasModels.js#L27-L29 "Source code on GitHub")
 
 Override to define the model names to access
 
