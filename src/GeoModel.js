@@ -50,7 +50,7 @@ export default BaseModel.extend({
   // Lifecycle
 
   geometryField: 'geo',
-  geometryFeatureField: 'geo_features',
+  geometryFeatureField: 'geoFeatures',
   geometrySingle: false,
   extractGeometryFeatures: extractGeometryFeatures,
 
