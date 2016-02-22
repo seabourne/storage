@@ -1,7 +1,7 @@
 'use strict';
 
 import Storage from '../src'
-import {Waterline, HasModels, BaseModel} from '../src'
+import {Waterline, HasModels, BaseModel, GeoModel} from '../src'
 
 import TestApp from '@nxus/core/lib/test/support/TestApp';
 
@@ -21,6 +21,7 @@ describe("Storage", () => {
     it("should provide waterline", () => Waterline.should.not.be.null)
     it("should provide HasModels", () => HasModels.should.not.be.null)
     it("should provide BaseModel", () => BaseModel.should.not.be.null)
+    it("should provide GeoModel", () => GeoModel.should.not.be.null)
 
     it("should be instantiated", () => {
       storage = new Storage(app);
@@ -173,6 +174,53 @@ describe("Storage", () => {
       }).then(() => {
         app.get('storage').emit.calledWith('model.destroy').should.be.true
         app.get('storage').emit.calledWith('model.destroy.one').should.be.true
+      })
+
+    })
+  });
+  describe("Model Geo class", () => {
+    beforeEach(() => {
+      app.config.storage = {
+        adapters: {
+          "default": "sails-memory"
+        }
+      }
+      var Geo = GeoModel.extend({
+        identity: 'geo',
+        attributes: {
+          'geo': 'json',
+          'geo_features': 'array',
+        }
+      })
+      storage = new Storage(app);
+      storage._setupAdapter()
+      storage.model(Geo)
+      return storage._connectDb()
+    });
+
+    afterEach(() => {
+      return storage._disconnectDb()
+    })
+    it("should return models with correct methods inherited", () => {
+      var geo = storage.getModel('geo')
+      geo.should.have.property('createGeoIndex')
+      geo.should.have.property('findWithin')
+      geo.should.have.property('findIntersects')
+    })
+    it("should emit CRUD events", () => {
+      var geo = storage.getModel('geo')
+      return geo.create({geo: {features: []}}).then((obj) => {
+        app.get('storage').emit.calledWith('model.create').should.be.true
+        app.get('storage').emit.calledWith('model.create.geo').should.be.true
+        obj.geo = {}
+        return obj.save()
+      }).then((obj) => {
+        app.get('storage').emit.calledWith('model.update').should.be.true
+        app.get('storage').emit.calledWith('model.update.geo').should.be.true
+        return obj.destroy()
+      }).then(() => {
+        app.get('storage').emit.calledWith('model.destroy').should.be.true
+        app.get('storage').emit.calledWith('model.destroy.geo').should.be.true
       })
 
     })
