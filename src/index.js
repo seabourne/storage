@@ -43,9 +43,9 @@
  * 
  * Or just a specific model identity:
  * 
- *       app.get('storage').on('model.create.user', (record) => {})
- *       app.get('storage').on('model.update.user', (record) => {})
- *       app.get('storage').on('model.destroy.user', (record) => {})
+ *       app.get('storage').on('model.create.user', (identity, record) => {})
+ *       app.get('storage').on('model.update.user', (identity, record) => {})
+ *       app.get('storage').on('model.destroy.user', (identity, record) => {})
  * 
  * # Lifecycle notes
  * 
@@ -208,7 +208,7 @@ export default class Storage {
   emitModelEvent (action, identity, record) {
     this.app.log.debug('Emitting model event', action, identity)
     this.emit('model.'+action, identity, record)
-    this.emit('model.'+action+'.'+identity, record)
+    this.emit('model.'+action+'.'+identity, identity, record)
   }
   
 }
