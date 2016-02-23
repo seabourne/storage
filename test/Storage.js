@@ -160,6 +160,14 @@ describe("Storage", () => {
       two.attributes.should.have.property('name')
       two.attributes.should.have.property('other')
     })
+    it("should have a displayName", () => {
+      var one = storage.getModel('one')
+      return one.create({color: 'red'}).then((obj) => {
+        app.get('storage').emit.calledWith('model.create').should.be.true
+        app.get('storage').emit.calledWith('model.create.one').should.be.true
+        obj.displayName().should.equal('red')
+      })
+    })
     it("should emit CRUD events", () => {
       var one = storage.getModel('one')
       return one.create({color: 'red'}).then((obj) => {
