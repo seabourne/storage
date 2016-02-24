@@ -43,9 +43,9 @@
  * 
  * Or just a specific model identity:
  * 
- *       app.get('storage').on('model.create.user', (record) => {})
- *       app.get('storage').on('model.update.user', (record) => {})
- *       app.get('storage').on('model.destroy.user', (record) => {})
+ *       app.get('storage').on('model.create.user', (identity, record) => {})
+ *       app.get('storage').on('model.update.user', (identity, record) => {})
+ *       app.get('storage').on('model.destroy.user', (identity, record) => {})
  * 
  * # Lifecycle notes
  * 
@@ -76,6 +76,7 @@ import _ from 'underscore'
 
 import hasModels from './HasModels'
 import baseModel from './BaseModel'
+import geoModel from './GeoModel'
 
 import path from 'path'
 import fs_ from 'fs'
@@ -102,6 +103,7 @@ const _defaultConfig = {
 export var HasModels = hasModels
 export var Waterline = waterline
 export var BaseModel = baseModel
+export var GeoModel = geoModel
 
 /**
  * Storage provides a common interface for defining models.  Uses the Waterline ORM.
@@ -208,7 +210,7 @@ export default class Storage {
   emitModelEvent (action, identity, record) {
     this.app.log.debug('Emitting model event', action, identity)
     this.emit('model.'+action, identity, record)
-    this.emit('model.'+action+'.'+identity, record)
+    this.emit('model.'+action+'.'+identity, identity, record)
   }
   
 }
