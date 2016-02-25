@@ -84,22 +84,6 @@ const fs = Promise.promisifyAll(fs_);
 
 const REGEX_FILE = /[^\/\~]$/;
 
-const _defaultConfig = {
-  adapters: {
-    'default': "sails-mongo"
-  },
-  connections: {
-    'default': {
-      "adapter": "default",
-      "url": "mongodb://localhost/nxus-app"
-    }
-  },
-  defaults: {
-    migrate: 'alter',
-  },
-  modelsDir: './src/models'
-};
-
 export var HasModels = hasModels
 export var Waterline = waterline
 export var BaseModel = baseModel
@@ -110,8 +94,25 @@ export var GeoModel = geoModel
  */
 export default class Storage {
   constructor (app) {
+    const _defaultConfig = {
+      adapters: {
+        'default': "sails-mongo"
+      },
+      connections: {
+        'default': {
+          "adapter": "default",
+          "url": "mongodb://localhost/nxus-app"
+        }
+      },
+      defaults: {
+        migrate: 'alter',
+      },
+      modelsDir: './src/models'
+    };
+
     BaseModel.prototype.storageModule = this
     this.waterline = Promise.promisifyAll(new Waterline());
+    console.log('this.waterline', this.waterline)
     this.waterlineConfig = null;
     this.collections = {};
     this.connections = null;
@@ -186,13 +187,33 @@ export default class Storage {
   _setupAdapter () {
     for (var key in this.config.adapters) {
       if (_.isString(this.config.adapters[key])) {
-        this.config.adapters[key] = require(this.config.adapters[key]);
+        var adapter = require(this.config.adapters[key]);
+        adapter._name = this.config.adapters[key]
+        this.config.adapters[key] = adapter;
       }
     }
   }
 
   _disconnectDb () {
-    return this.waterline.teardownAsync();
+    var adapters = _.pluck(_.values(this.config.adapters), '_name');
+    return Promise.all(_.values(this.config.adapters), (adapter) => {
+      return new Promise((resolve) => {
+        adapter.teardown(null, resolve);
+      });
+    }).then(() => {
+      return this.waterline.teardownAsync()
+    }).then(() => {
+      return new Promise((resolve) => {
+        // we only want to reload nxus code
+        // but we need to always reload mongoose so that models can be rebuilt
+        adapters = new RegExp("^.*("+adapters.join("|")+").*")
+        _.each(require.cache, (v, k) => {
+          if (!adapters.test(k)) return
+          delete require.cache[k]
+        })
+        resolve()
+      })
+    });
   }
   
   _connectDb () {
@@ -204,6 +225,8 @@ export default class Storage {
     }).then((obj) => {
       this.connections = obj.connections;
       this.collections = obj.collections;
+    }).catch((e) => {
+      this.app.log.warn(e)
     });
   }
 
