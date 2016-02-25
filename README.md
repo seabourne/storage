@@ -46,9 +46,9 @@ The storage model emits events for create, update, and destroy, you can register
 
 Or just a specific model identity:
 
-      app.get('storage').on('model.create.user', (record) => {})
-      app.get('storage').on('model.update.user', (record) => {})
-      app.get('storage').on('model.destroy.user', (record) => {})
+      app.get('storage').on('model.create.user', (identity, record) => {})
+      app.get('storage').on('model.update.user', (identity, record) => {})
+      app.get('storage').on('model.destroy.user', (identity, record) => {})
 
 ## Lifecycle notes
 
@@ -110,7 +110,7 @@ app.get('storage').model(...)
 
 The HasModels class is a Base class for defining helper classes with Models.
 
-### model\_names
+### modelNames
 
 Override to define the model names to access
 
