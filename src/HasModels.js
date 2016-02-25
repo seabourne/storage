@@ -8,7 +8,7 @@ export default class HasModels {
     this.models = {}
     
     app.on('startup', () => {
-      let mods = this.model_names();
+      let mods = this.modelNames();
       for (let id in mods) {
         app.get('storage').getModel(id).then((model) => {
           this.models[mods[id]] = model;
@@ -24,7 +24,7 @@ export default class HasModels {
    * return {'user': 'User'}
    * }
    */
-  model_names () {
-    throw this.constructor.name+".model_names not implemented"
+  modelNames () {
+    throw this.constructor.name+".modelNames not implemented"
   }
 }
