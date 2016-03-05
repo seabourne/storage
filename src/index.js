@@ -96,19 +96,16 @@ export default class Storage {
   constructor (app) {
     const _defaultConfig = {
       adapters: {
-        'default': "sails-mongo"
+        'default': "waterline-sqlite3"
       },
       connections: {
         'default': {
-          "adapter": "default",
-          "url": "mongodb://localhost/nxus-app"
+          adapter: 'default', // or 'memory' 
         }
-      },
-      defaults: {
-        migrate: 'alter',
-      },
-      modelsDir: './src/models'
+      }
     };
+
+    app.writeDefaultConfig('storage', _defaultConfig)
 
     BaseModel.prototype.storageModule = this
     this.waterline = Promise.promisifyAll(new Waterline());
@@ -118,7 +115,7 @@ export default class Storage {
     this.connections = null;
     this.app = app;
 
-    this.config = Object.assign(_defaultConfig, app.config.storage);
+    this.config = app.config.storage
 
     app.get('storage').use(this)
     this.gather('model')
@@ -169,6 +166,7 @@ export default class Storage {
   // Internal
   
   _loadLocalModels () {
+    if(!this.config.modelsDir) return
     var dir = path.resolve(this.config.modelsDir);
     try {
       fs.accessSync(dir);
