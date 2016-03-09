@@ -109,7 +109,6 @@ export default class Storage {
 
     BaseModel.prototype.storageModule = this
     this.waterline = Promise.promisifyAll(new Waterline());
-    console.log('this.waterline', this.waterline)
     this.waterlineConfig = null;
     this.collections = {};
     this.connections = null;

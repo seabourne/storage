@@ -14,6 +14,17 @@ describe("Storage", () => {
  
   beforeEach(() => {
     app = new TestApp();
+    app.config.storage = {
+      adapters: {
+        "default": "sails-memory"
+      },
+      modelsDir: './src/models',
+      connections: {
+        'default': {
+          adapter: 'default'
+        }
+      }
+    }
   });
   
   describe("Load", () => {
@@ -95,7 +106,15 @@ describe("Storage", () => {
   describe("Local Models", () => {
     beforeEach(() => {
       app.config.storage = {
-        modelsDir: './test/models'
+        adapters: {
+          "default": "sails-memory"
+        },
+        modelsDir: './test/models',
+        connections: {
+          'default': {
+            adapter: 'default'
+          }
+        }
       }
       storage = new Storage(app);
       return app.launch();
@@ -116,6 +135,11 @@ describe("Storage", () => {
       app.config.storage = {
         adapters: {
           "default": "sails-memory"
+        },
+        connections: {
+          'default': {
+            adapter: 'default'
+          }
         }
       }
       storage = new Storage(app);
@@ -137,6 +161,12 @@ describe("Storage", () => {
       app.config.storage = {
         adapters: {
           "default": "sails-memory"
+        },
+        modelsDir: './test/models',
+        connections: {
+          'default': {
+            adapter: 'default'
+          }
         }
       }
       storage = new Storage(app);
@@ -183,6 +213,11 @@ describe("Storage", () => {
       app.config.storage = {
         adapters: {
           "default": "sails-memory"
+        },
+        connections: {
+          'default': {
+            adapter: 'default'
+          }
         }
       }
       var Geo = GeoModel.extend({
