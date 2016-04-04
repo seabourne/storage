@@ -203,7 +203,7 @@ export default class Storage {
       return new Promise((resolve) => {
         // we only want to reload nxus code
         // but we need to always reload mongoose so that models can be rebuilt
-        adapters = new RegExp("^.*("+adapters.join("|")+").*")
+        adapters = new RegExp("^.*("+adapters.join("|")+").*.js")
         _.each(require.cache, (v, k) => {
           if (!adapters.test(k)) return
           delete require.cache[k]
