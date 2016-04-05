@@ -152,13 +152,16 @@ export default class Storage {
 
   /**
    * Request a model based on its identity (name)
-   * @param {string} id The identity of a registered model
-   * @return {Promise}  The model class
+   * @param {string|array} id The identity of a registered model, or array of identities
+   * @return {Promise}  The model class(es)
    * @example app.get('storage').getModel('user')
    */
   
   getModel (id) {
     this.app.log.debug('Getting model', id)
+    if (_.isArray(id)) {
+      return _.map(id, (i) => { return this.collections[i]})
+    }
     return this.collections[id];
   }
 
