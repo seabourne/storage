@@ -26,7 +26,7 @@ export default class HasModels {
    * Override to define the model names to access
    * @return {array|object} Model identities to add to this.models, or object of {identity: name}
    * @example modelNames() { 
-   * return ['user']
+   *   return ['user']
    * }
    */
   modelNames () {
