@@ -77,6 +77,7 @@ import _ from 'underscore'
 import hasModels from './HasModels'
 import baseModel from './BaseModel'
 import geoModel from './GeoModel'
+import pointModel from './PointModel'
 
 import path from 'path'
 import fs_ from 'fs'
@@ -88,6 +89,7 @@ export var HasModels = hasModels
 export var Waterline = waterline
 export var BaseModel = baseModel
 export var GeoModel = geoModel
+export var PointModel = pointModel
 
 /**
  * Storage provides a common interface for defining models.  Uses the Waterline ORM.
