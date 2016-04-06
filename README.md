@@ -82,7 +82,7 @@ Request a model based on its identity (name)
 
 **Parameters**
 
--   `id` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** The identity of a registered model
+-   `id` **([string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)\|[array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array))** The identity of a registered model, or array of identities
 
 **Examples**
 
@@ -90,7 +90,7 @@ Request a model based on its identity (name)
 app.get('storage').getModel('user')
 ```
 
-Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)** The model class
+Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)** The model class(es)
 
 ### model
 
@@ -117,9 +117,9 @@ Override to define the model names to access
 **Examples**
 
 ```javascript
-model_names() { 
-return {'user': 'User'}
+modelNames() { 
+  return ['user']
 }
 ```
 
-Returns **[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** (model identifier: class attribute) pairs
+Returns **([array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)\|[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object))** Model identities to add to this.models, or object of {identity: name}
