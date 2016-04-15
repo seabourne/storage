@@ -160,7 +160,6 @@ export default class Storage {
    */
   
   getModel (id) {
-    this.app.log.debug('Getting model', id)
     if (_.isArray(id)) {
       return _.map(id, (i) => { return this.collections[i]})
     }
