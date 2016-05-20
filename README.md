@@ -1,4 +1,4 @@
-# @nxus/storage
+# nxus-storage
 
 ## 
 
