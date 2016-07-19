@@ -3,7 +3,7 @@
 import Storage from '../src'
 import {Waterline, HasModels, BaseModel, GeoModel} from '../src'
 
-import TestApp from '@nxus/core/lib/test/support/TestApp';
+import TestApp from 'nxus-core/lib/test/support/TestApp';
 
 import One from './models/One'
 import Two from './models/Two'

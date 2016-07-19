@@ -1,6 +1,6 @@
 import {HasModels} from '../src'
 
-import TestApp from '@nxus/core/lib/test/support/TestApp';
+import TestApp from 'nxus-core/lib/test/support/TestApp';
 
 describe("HasModels", () => {
   class MyModule extends HasModels {
