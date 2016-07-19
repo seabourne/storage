@@ -205,7 +205,9 @@ describe("Storage", () => {
         app.get('storage').emit.calledWith('model.create.one').should.be.true
         obj.color = 'blue'
         return obj.save()
+          .then(() => obj) // save doesn't return object as of waterline 0.11.0
       }).then((obj) => {
+console.log("****** obj", obj)
         app.get('storage').emit.calledWith('model.update').should.be.true
         app.get('storage').emit.calledWith('model.update.one').should.be.true
         return obj.destroy()
@@ -257,6 +259,7 @@ describe("Storage", () => {
         app.get('storage').emit.calledWith('model.create.geo').should.be.true
         obj.geo = {}
         return obj.save()
+          .then(() => obj) // save doesn't return object as of waterline 0.11.0
       }).then((obj) => {
         app.get('storage').emit.calledWith('model.update').should.be.true
         app.get('storage').emit.calledWith('model.update.geo').should.be.true
