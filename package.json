@@ -36,7 +36,7 @@
     "bluebird": "^3.0.6",
     "traverse": "^0.6.6",
     "underscore": "^1.8.3",
-    "waterline": "^0.10.28",
+    "waterline": "^0.12.2",
     "waterline-sqlite3": "^1.0.0"
   },
   "peerDependencies": {
