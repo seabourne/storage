@@ -227,7 +227,7 @@ export default class Storage {
       this.connections = obj.connections;
       this.collections = obj.collections;
     }).catch((e) => {
-      this.app.log.warn(e)
+      this.app.log.error(e)
     });
   }
 

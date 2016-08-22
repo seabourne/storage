@@ -4,12 +4,14 @@
   "description": "Storage framework for Nxus applications",
   "main": "lib/",
   "scripts": {
-    "test": "NODE_ENV=test mocha --compilers js:babel-core/register -R spec",
-    "compile": "babel src --out-dir lib ",
+    "preversion": "npm test",
+    "postversion": "npm run build-docs && git push && git push --tags",
+    "test": "npm run compile && NODE_ENV=test mocha --compilers js:babel-core/register -R spec test/lib/* --config=./test/testApp/.nxusrc",
+    "compile": "babel src --out-dir lib",
     "prepublish": "npm run compile",
     "postpublish": "npm run docs-readme && npm run commit-update-docs",
-    "docs-readme": "export NAME=`npm view . name`; export VERSION=`npm view . version`; documentation readme ./src/*.js --name $NAME --project-version $VERSION --readme-file ./README.md -s $NAME",
-    "commit-update-docs": "git add ./README.md && git commit -m 'Updated README API Docs' && git push"
+    "build-docs": "export NAME=`npm view . name`; export VERSION=`npm view . version`; documentation readme ./src/*.js --name $NAME --project-version $VERSION --readme-file ./README.md -s $NAME",
+    "publish-docs": "npm run build-docs && git add ./README.md && git commit -m 'Updated README API Docs' && git push"
   },
   "repository": {
     "type": "git",
@@ -26,11 +28,6 @@
   "bugs": {
     "url": "https://github.com/nxus/storage/issues"
   },
-  "babel": {
-    "presets": [
-      "es2015"
-    ]
-  },
   "homepage": "https://github.com/nxus/storage",
   "dependencies": {
     "bluebird": "^3.0.6",
@@ -40,10 +37,10 @@
     "waterline-sqlite3": "^1.0.3"
   },
   "peerDependencies": {
-    "nxus-core": "^3.0.0-0"
+    "nxus-core": "^3.0.0"
   },
   "devDependencies": {
-    "documentation": "^4.0.0-beta",
+    "documentation": "^4.0.0-beta9",
     "chai": "^3.4.1",
     "chai-as-promised": "^5.1.0",
     "mocha": "^2.2.5",
