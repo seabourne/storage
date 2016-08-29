@@ -1,6 +1,6 @@
 'use strict'
 
-import {BaseModel} from '../../src/'
+import {BaseModel} from '../../'
 
 export default BaseModel.extend({
   attributes: {

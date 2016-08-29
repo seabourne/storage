@@ -37,15 +37,15 @@
  * 
  * The storage model emits events for create, update, and destroy, you can register a handler for all events:
  * 
- *       app.get('storage').on('model.create', (identity, record) => {})
- *       app.get('storage').on('model.update', (identity, record) => {})
- *       app.get('storage').on('model.destroy', (identity, record) => {})
+ *       application.get('storage').on('model.create', (identity, record) => {})
+ *       application.get('storage').on('model.update', (identity, record) => {})
+ *       application.get('storage').on('model.destroy', (identity, record) => {})
  * 
  * Or just a specific model identity:
  * 
- *       app.get('storage').on('model.create.user', (identity, record) => {})
- *       app.get('storage').on('model.update.user', (identity, record) => {})
- *       app.get('storage').on('model.destroy.user', (identity, record) => {})
+ *       application.get('storage').on('model.create.user', (identity, record) => {})
+ *       application.get('storage').on('model.update.user', (identity, record) => {})
+ *       application.get('storage').on('model.destroy.user', (identity, record) => {})
  * 
  * # Lifecycle notes
  * 
@@ -55,12 +55,12 @@
  *               identity: 'user',
  *               ...
  *             });
- *             app.get('storage').model(User)
+ *             application.get('storage').model(User)
  * -   `startup`
  *     -   The configured database is connected during `load.after`
  *     -   You can query models from `startup` and beyond, retrieve the model by the 'identity':
  * 
- *             app.get('storage').getModel('user').then((User) => {
+ *             application.get('storage').getModel('user').then((User) => {
  *                 User.create(...);
  *             });
  *
@@ -70,33 +70,54 @@
 
 'use strict';
 
+import {application, NxusModule} from 'nxus-core'
+
 import waterline from 'waterline'
+import baseModel from './BaseModel'
 import Promise from 'bluebird'
 import _ from 'underscore'
-
-import hasModels from './HasModels'
-import baseModel from './BaseModel'
-import geoModel from './GeoModel'
-import pointModel from './PointModel'
 
 import path from 'path'
 import fs_ from 'fs'
 const fs = Promise.promisifyAll(fs_);
 
-const REGEX_FILE = /[^\/\~]$/;
-
-export var HasModels = hasModels
 export var Waterline = waterline
 export var BaseModel = baseModel
-export var GeoModel = geoModel
-export var PointModel = pointModel
 
+const REGEX_FILE = /[^\/\~]$/;
 /**
  * Storage provides a common interface for defining models.  Uses the Waterline ORM.
  */
-export default class Storage {
-  constructor (app) {
-    const _defaultConfig = {
+class Storage extends NxusModule {
+  
+  constructor () {
+    super()
+
+    BaseModel.prototype.storageModule = this
+    this.waterline = Promise.promisifyAll(new Waterline());
+    this.waterlineConfig = null;
+    this.collections = {};
+    this.connections = null;
+
+    application.once('init', () => {
+      return Promise.all([
+        this._setupAdapter(),
+        this._loadLocalModels()
+      ]);
+    });
+
+    application.onceAfter('load', () => {
+      return this._connectDb();
+    });
+
+    application.once('stop', () => {
+      return this._disconnectDb();
+    })
+
+  }
+
+  _defaultConfig () {
+    return {
       adapters: {
         'default': "waterline-sqlite3"
       },
@@ -106,37 +127,6 @@ export default class Storage {
         }
       }
     };
-
-    app.writeDefaultConfig('storage', _defaultConfig)
-
-    BaseModel.prototype.storageModule = this
-    this.waterline = Promise.promisifyAll(new Waterline());
-    this.waterlineConfig = null;
-    this.collections = {};
-    this.connections = null;
-    this.app = app;
-
-    this.config = app.config.storage
-
-    app.get('storage').use(this)
-    this.gather('model')
-    this.respond('getModel')
-
-    app.once('init', () => {
-      return Promise.all([
-        this._setupAdapter(),
-        this._loadLocalModels()
-      ]);
-    });
-
-    app.onceAfter('load', () => {
-      return this._connectDb();
-    });
-
-    app.once('stop', () => {
-      return this._disconnectDb();
-    })
-
   }
 
   // Handlers
@@ -144,11 +134,11 @@ export default class Storage {
   /**
    * Provide a model
    * @param {object} model A Waterline-compatible model class
-   * @example app.get('storage').model(...)
+   * @example application.get('storage').model(...)
    */
   
   model (model) {
-    this.app.log.debug('Registering model', model.identity)
+    this.log.debug('Registering model', model.identity)
     this.waterline.loadCollection(model)
   }
 
@@ -156,12 +146,12 @@ export default class Storage {
    * Request a model based on its identity (name)
    * @param {string|array} id The identity of a registered model, or array of identities
    * @return {Promise}  The model class(es)
-   * @example app.get('storage').getModel('user')
+   * @example application.get('storage').getModel('user')
    */
   
   getModel (id) {
     if (_.isArray(id)) {
-      return _.map(id, (i) => { return this.collections[i]})
+      return id.map((i) => { return this.collections[i]})
     }
     return this.collections[id];
   }
@@ -196,8 +186,8 @@ export default class Storage {
   }
 
   _disconnectDb () {
-    var adapters = _.pluck(_.values(this.config.adapters), '_name');
-    return Promise.all(_.values(this.config.adapters), (adapter) => {
+    var adapters = Object.values(this.config.adapters).map(e => e['_name']);
+    return Promise.all(Object.values(this.config.adapters), (adapter) => {
       return new Promise((resolve) => {
         adapter.teardown(null, resolve);
       });
@@ -218,7 +208,7 @@ export default class Storage {
   }
   
   _connectDb () {
-    this.app.log.debug('Connecting to dB', this.config.connections)
+    this.log.debug('Connecting to dB', this.config.connections)
     return this.waterline.initializeAsync({
       adapters: this.config.adapters,
       connections: this.config.connections,
@@ -227,14 +217,16 @@ export default class Storage {
       this.connections = obj.connections;
       this.collections = obj.collections;
     }).catch((e) => {
-      this.app.log.error(e)
+      this.log.error(e)
     });
   }
 
   emitModelEvent (action, identity, record) {
-    this.app.log.debug('Emitting model event', action, identity)
+    this.log.debug('Emitting model event', action, identity)
     this.emit('model.'+action, identity, record)
     this.emit('model.'+action+'.'+identity, identity, record)
   }
-  
 }
+
+export default Storage
+export let storage = Storage.getProxy()

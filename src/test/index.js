@@ -1,50 +1,57 @@
 'use strict';
 
-import Storage from '../src'
-import {Waterline, HasModels, BaseModel, GeoModel} from '../src'
+import Storage from '../'
+import {storage as storageProxy} from '../'
+import {Waterline, HasModels, BaseModel, GeoModel} from '../'
 
-import TestApp from 'nxus-core/lib/test/support/TestApp';
+import sinon from 'sinon'
+import {application as app} from 'nxus-core'
 
 import One from './models/One'
 import Two from './models/Two'
 
 describe("Storage", () => {
   var storage;
-  var app = new TestApp();
+
+  before(() => {
+    sinon.spy(app, "once")
+    sinon.spy(app, "onceAfter")
+    sinon.spy(storageProxy, "respond")
+    sinon.spy(storageProxy, "request")
+  })
  
-  beforeEach(() => {
-    app = new TestApp();
-    app.config.storage = {
-      adapters: {
-        "default": "sails-memory"
-      },
-      modelsDir: './src/models',
-      connections: {
-        'default': {
-          adapter: 'default'
-        }
-      }
-    }
-  });
+  // beforeEach(() => {
+  //   app = new TestApp();
+  //   app.config.storage = {
+  //     adapters: {
+  //       "default": "sails-memory"
+  //     },
+  //     modelsDir: './src/models',
+  //     connections: {
+  //       'default': {
+  //         adapter: 'default'
+  //       }
+  //     }
+  //   }
+  // });
   
   describe("Load", () => {
     it("should not be null", () => Storage.should.not.be.null)
     it("should provide waterline", () => Waterline.should.not.be.null)
-    it("should provide HasModels", () => HasModels.should.not.be.null)
     it("should provide BaseModel", () => BaseModel.should.not.be.null)
-    it("should provide GeoModel", () => GeoModel.should.not.be.null)
+
+    it("should not be null", () => {
+      Storage.should.not.be.null
+      storageProxy.should.not.be.null
+    })
 
     it("should be instantiated", () => {
       storage = new Storage(app);
       storage.should.not.be.null;
-      BaseModel.prototype.storageModule.should.not.be.null
     });
   });
-  describe("Init", () => {
-    beforeEach(() => {
-      storage = new Storage(app);
-    });
 
+  describe("Init", () => {
     it("should register for app lifecycle", () => {
       app.once.called.should.be.true;
       app.onceAfter.calledWith('load').should.be.true;
@@ -55,25 +62,12 @@ describe("Storage", () => {
     it("should have config after load", () => {
       return app.emit('load').then(() => {
         storage.should.have.property('config');
-        storage.config.should.have.property('modelsDir', './src/models');
         storage.config.should.have.property('connections');
       });
     });
-    it("should register a gather for models", () => {
-      return app.emit('load').then(() => {
-        app.get.calledWith('storage').should.be.true;
-        app.get().gather.calledWith('model').should.be.true;
-      });
-    })
-    it("should register a handler for getModel", () => {
-      return app.emit('load').then(() => {
-        app.get().respond.calledWith('getModel').should.be.true;
-      });
-    })
   });
   describe("Models", () => {
     beforeEach(() => {
-      
       storage = new Storage(app);
       var Dummy = BaseModel.extend({
         identity: 'dummy',
@@ -84,7 +78,7 @@ describe("Storage", () => {
       });
       // Shortcut around gather stub
       storage.model(Dummy)
-      return app.launch();
+      return app.emit('launch')
     });
 
     afterEach(() => {

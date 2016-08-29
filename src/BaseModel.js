@@ -5,7 +5,6 @@ var BaseModel = Waterline.Collection.extend({
   connection: 'default',
   storageModule: null,
   attributes: {
-    
     displayName: function displayName() {
       // Appears there is no way to get to the attribute definitions from an instance.
       var firstString = _.first(_.compact(_(this).pairs().map(([key, value]) => { if (!_.contains(['id', 'createdAt', 'updatedAt'], key) && _.isString(value)) return key })))
