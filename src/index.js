@@ -170,6 +170,7 @@ class Storage extends NxusModule {
   /**
    * Register all models in a directory
    * @param {string} dir Directory containing model files
+   * @return {Promise}  Array of model identities
    * @example application.get('storage').model(...)
    */
   
@@ -179,15 +180,19 @@ class Storage extends NxusModule {
     } catch (e) {
       return;
     }
+    let identities = []
     return fs.readdirAsync(dir).each((file) => {
       if (REGEX_FILE.test(file)) {
-        var p = path.resolve(path.join(dir,path.basename(file, '.js')));
-        var m = require(p);
+        var p = path.resolve(path.join(dir,path.basename(file, '.js')))
+        var m = require(p)
         if (m.default) {
           m = m.default
         }
-        this.provide('model', m);
+        this.provide('model', m)
+        identities.push(m.prototype.identity)
       }
+    }).then(() => {
+      return identities
     });
   }
 

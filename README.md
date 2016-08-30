@@ -149,3 +149,5 @@ Register all models in a directory
 ```javascript
 application.get('storage').model(...)
 ```
+
+Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)** Array of model identities

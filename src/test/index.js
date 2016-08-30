@@ -122,9 +122,12 @@ describe("Storage", () => {
     })
     
     it("should register local models", () => {
-      return storage.modelDir(__dirname+"/models").then(() => {
+      return storage.modelDir(__dirname+"/models").then((ids) => {
         storage.provide.calledTwice.should.be.true
         storage.provide.calledWith('model').should.be.true
+        ids.length.should.equal(2)
+        ids.includes('one').should.be.true
+        ids.includes('two').should.be.true
       })
     });
   });
