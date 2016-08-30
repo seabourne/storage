@@ -33,19 +33,29 @@
  *       }
  *     })
  * 
+ * # Register models
+ * 
+ * Either import your model class and pass it to `model()`:
+ * 
+ *     storage.model(modelClass)
+ * 
+ * Or register all models in a directory with `modelDir()`:
+ * 
+ *     storage.modelDir(__dirname+"/models")
+ * 
  * # Model events
  * 
  * The storage model emits events for create, update, and destroy, you can register a handler for all events:
  * 
- *       application.get('storage').on('model.create', (identity, record) => {})
- *       application.get('storage').on('model.update', (identity, record) => {})
- *       application.get('storage').on('model.destroy', (identity, record) => {})
+ *       storage.on('model.create', (identity, record) => {})
+ *       storage.on('model.update', (identity, record) => {})
+ *       storage.on('model.destroy', (identity, record) => {})
  * 
  * Or just a specific model identity:
  * 
- *       application.get('storage').on('model.create.user', (identity, record) => {})
- *       application.get('storage').on('model.update.user', (identity, record) => {})
- *       application.get('storage').on('model.destroy.user', (identity, record) => {})
+ *       storage.on('model.create.user', (identity, record) => {})
+ *       storage.on('model.update.user', (identity, record) => {})
+ *       storage.on('model.destroy.user', (identity, record) => {})
  * 
  * # Lifecycle notes
  * 
@@ -74,6 +84,7 @@ import {application, NxusModule} from 'nxus-core'
 
 import waterline from 'waterline'
 import baseModel from './BaseModel'
+import geoModel from './GeoModel'
 import Promise from 'bluebird'
 import _ from 'underscore'
 
@@ -83,6 +94,7 @@ const fs = Promise.promisifyAll(fs_);
 
 export var Waterline = waterline
 export var BaseModel = baseModel
+export var GeoModel = geoModel
 
 const REGEX_FILE = /[^\/\~]$/;
 /**
@@ -102,7 +114,6 @@ class Storage extends NxusModule {
     application.once('init', () => {
       return Promise.all([
         this._setupAdapter(),
-        this._loadLocalModels()
       ]);
     });
 
@@ -132,13 +143,13 @@ class Storage extends NxusModule {
   // Handlers
 
   /**
-   * Provide a model
+   * Register a model
    * @param {object} model A Waterline-compatible model class
-   * @example application.get('storage').model(...)
+   * @example storage.model(...)
    */
   
   model (model) {
-    this.log.debug('Registering model', model.identity)
+    this.log.debug('Registering model', model.prototype.identity)
     this.waterline.loadCollection(model)
   }
 
@@ -146,7 +157,7 @@ class Storage extends NxusModule {
    * Request a model based on its identity (name)
    * @param {string|array} id The identity of a registered model, or array of identities
    * @return {Promise}  The model class(es)
-   * @example application.get('storage').getModel('user')
+   * @example storage.getModel('user')
    */
   
   getModel (id) {
@@ -156,11 +167,13 @@ class Storage extends NxusModule {
     return this.collections[id];
   }
 
-  // Internal
+  /**
+   * Register all models in a directory
+   * @param {string} dir Directory containing model files
+   * @example application.get('storage').model(...)
+   */
   
-  _loadLocalModels () {
-    if(!this.config.modelsDir) return
-    var dir = path.resolve(this.config.modelsDir);
+  modelDir (dir) {
     try {
       fs.accessSync(dir);
     } catch (e) {
@@ -170,11 +183,16 @@ class Storage extends NxusModule {
       if (REGEX_FILE.test(file)) {
         var p = path.resolve(path.join(dir,path.basename(file, '.js')));
         var m = require(p);
+        if (m.default) {
+          m = m.default
+        }
         this.provide('model', m);
       }
     });
   }
 
+  // Internal
+  
   _setupAdapter () {
     for (var key in this.config.adapters) {
       if (_.isString(this.config.adapters[key])) {
@@ -186,8 +204,8 @@ class Storage extends NxusModule {
   }
 
   _disconnectDb () {
-    var adapters = Object.values(this.config.adapters).map(e => e['_name']);
-    return Promise.all(Object.values(this.config.adapters), (adapter) => {
+    var adapters = _.values(this.config.adapters).map(e => e['_name']);
+    return Promise.all(_.values(this.config.adapters), (adapter) => {
       return new Promise((resolve) => {
         adapter.teardown(null, resolve);
       });
