@@ -85,6 +85,7 @@ import {application, NxusModule} from 'nxus-core'
 import waterline from 'waterline'
 import baseModel from './BaseModel'
 import geoModel from './GeoModel'
+import hasModels from './HasModels'
 import Promise from 'bluebird'
 import _ from 'underscore'
 
@@ -95,6 +96,7 @@ const fs = Promise.promisifyAll(fs_);
 export var Waterline = waterline
 export var BaseModel = baseModel
 export var GeoModel = geoModel
+export var HasModels = hasModels
 
 const REGEX_FILE = /[^\/\~]$/;
 /**
