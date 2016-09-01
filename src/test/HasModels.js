@@ -1,39 +1,36 @@
-// import {HasModels} from '../src'
+import sinon from 'sinon'
+import {application as app} from 'nxus-core'
+import {storage as storageProxy, HasModels} from '../'
 
-// import TestApp from 'nxus-core/lib/test/support/TestApp';
+describe("HasModels", () => {
+  class MyModule extends HasModels {
+    modelNames() {
+      return ['user']
+    }
+  }
+  class MyModuleRename extends HasModels {
+    modelNames() {
+      return {'user2': 'User2'}
+    }
+  }
+  var module
 
-// describe("HasModels", () => {
-//   class MyModule extends HasModels {
-//     modelNames() {
-//       return ['user']
-//     }
-//   }
-//   class MyModuleRename extends HasModels {
-//     modelNames() {
-//       return {'user': 'User'}
-//     }
-//   }
-//   var module
-//   var app = new TestApp();
- 
-//   beforeEach(() => {
-//     app = new TestApp();
-//   });
-  
-//   it("should request models", () => {
-//     module = new MyModule(app)
-//     app.on.calledWith('startup').should.be.true;
-//     app.emit('startup').then(() => {
-//       app.get.calledWith('storage').should.be.true;
-//       app.get().provide.calledWith('getModel', 'user').should.be.true;
-//     })
-//   });
-//   it("should request models from object", () => {
-//     module = new MyModuleRename(app)
-//     app.on.calledWith('startup').should.be.true;
-//     app.emit('startup').then(() => {
-//       app.get.calledWith('storage').should.be.true;
-//       app.get().provide.calledWith('getModel', 'user').should.be.true;
-//     })
-//   });
-// })
+  before(() => {
+    sinon.spy(storageProxy, "provide")
+    sinon.spy(app, "on")
+  });
+
+  it("should request models", () => {
+    module = new MyModule()
+    app.on.calledWith('startup').should.be.true;
+    app.emit('startup').then(() => {
+      storageProxy.provide.calledWith('getModel', 'user').should.be.true;
+    })
+  });
+  it("should request models from object", () => {
+    module = new MyModuleRename()
+    app.emit('startup').then(() => {
+      storageProxy.provide.calledWith('getModel', 'user').should.be.true;
+    })
+  });
+})

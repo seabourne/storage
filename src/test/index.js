@@ -67,8 +67,11 @@ describe("Storage", () => {
     });
   });
   describe("Models", () => {
+    before(() => {
+      sinon.spy(storage, 'provide')
+      sinon.spy(storage, 'emit')
+    })
     beforeEach(() => {
-      storage = new Storage(app);
       var Dummy = BaseModel.extend({
         identity: 'dummy',
         connection: 'default',
@@ -78,7 +81,8 @@ describe("Storage", () => {
       });
       // Shortcut around gather stub
       storage.model(Dummy)
-      return app.emit('launch')
+      storage._setupAdapter()
+      return storage._connectDb()
     });
 
     afterEach(() => {
@@ -91,27 +95,26 @@ describe("Storage", () => {
       storage.collections.should.have.property('dummy');
     });
     it("should return model by identity", () => {
-      var dummy = storage.getModel('dummy');
-      dummy.should.exist;
-      dummy.identity.should.equal('dummy');
+      var dummy = storage.getModel('dummy')
+      dummy.should.exist
+      dummy.identity.should.equal('dummy')
     });
 
   });
-  describe("Local Models", () => {
+  describe("Model Dir", () => {
     beforeEach(() => {
       app.config.storage = {
         adapters: {
           "default": "sails-memory"
         },
-        modelsDir: './test/models',
         connections: {
           'default': {
             adapter: 'default'
           }
         }
       }
-      storage = new Storage(app);
-      return app.launch();
+      storage._setupAdapter()
+      return storage._connectDb()
     });
 
     afterEach(() => {
@@ -119,8 +122,13 @@ describe("Storage", () => {
     })
     
     it("should register local models", () => {
-      app.get().provide.calledTwice.should.be.true;
-      app.get().provide.calledWith('model').should.be.true;
+      return storage.modelDir(__dirname+"/models").then((ids) => {
+        storage.provide.calledTwice.should.be.true
+        storage.provide.calledWith('model').should.be.true
+        ids.length.should.equal(2)
+        ids.includes('one').should.be.true
+        ids.includes('two').should.be.true
+      })
     });
   });
   
@@ -136,8 +144,8 @@ describe("Storage", () => {
           }
         }
       }
-      storage = new Storage(app);
-      return app.launch();
+      storage._setupAdapter()
+      return storage._connectDb()
     });
 
     afterEach(() => {
@@ -163,7 +171,6 @@ describe("Storage", () => {
           }
         }
       }
-      storage = new Storage(app);
       storage._setupAdapter()
       storage.model(One)
       storage.model(Two)
@@ -187,27 +194,26 @@ describe("Storage", () => {
     it("should have a displayName", () => {
       var one = storage.getModel('one')
       return one.create({color: 'red'}).then((obj) => {
-        app.get('storage').emit.calledWith('model.create').should.be.true
-        app.get('storage').emit.calledWith('model.create.one').should.be.true
+        storage.emit.calledWith('model.create').should.be.true
+        storage.emit.calledWith('model.create.one').should.be.true
         obj.displayName().should.equal('red')
       })
     })
     it("should emit CRUD events", () => {
       var one = storage.getModel('one')
       return one.create({color: 'red'}).then((obj) => {
-        app.get('storage').emit.calledWith('model.create').should.be.true
-        app.get('storage').emit.calledWith('model.create.one').should.be.true
+        storage.emit.calledWith('model.create').should.be.true
+        storage.emit.calledWith('model.create.one').should.be.true
         obj.color = 'blue'
         return obj.save()
           .then(() => obj) // save doesn't return object as of waterline 0.11.0
       }).then((obj) => {
-console.log("****** obj", obj)
-        app.get('storage').emit.calledWith('model.update').should.be.true
-        app.get('storage').emit.calledWith('model.update.one').should.be.true
+        storage.emit.calledWith('model.update').should.be.true
+        storage.emit.calledWith('model.update.one').should.be.true
         return obj.destroy()
       }).then(() => {
-        app.get('storage').emit.calledWith('model.destroy').should.be.true
-        app.get('storage').emit.calledWith('model.destroy.one').should.be.true
+        storage.emit.calledWith('model.destroy').should.be.true
+        storage.emit.calledWith('model.destroy.one').should.be.true
       })
 
     })
@@ -231,7 +237,6 @@ console.log("****** obj", obj)
           'geo_features': 'array',
         }
       })
-      storage = new Storage(app);
       storage._setupAdapter()
       storage.model(Geo)
       return storage._connectDb()
@@ -249,18 +254,18 @@ console.log("****** obj", obj)
     it("should emit CRUD events", () => {
       var geo = storage.getModel('geo')
       return geo.create({geo: {features: []}}).then((obj) => {
-        app.get('storage').emit.calledWith('model.create').should.be.true
-        app.get('storage').emit.calledWith('model.create.geo').should.be.true
+        storage.emit.calledWith('model.create').should.be.true
+        storage.emit.calledWith('model.create.geo').should.be.true
         obj.geo = {}
         return obj.save()
           .then(() => obj) // save doesn't return object as of waterline 0.11.0
       }).then((obj) => {
-        app.get('storage').emit.calledWith('model.update').should.be.true
-        app.get('storage').emit.calledWith('model.update.geo').should.be.true
+        storage.emit.calledWith('model.update').should.be.true
+        storage.emit.calledWith('model.update.geo').should.be.true
         return obj.destroy()
       }).then(() => {
-        app.get('storage').emit.calledWith('model.destroy').should.be.true
-        app.get('storage').emit.calledWith('model.destroy.geo').should.be.true
+        storage.emit.calledWith('model.destroy').should.be.true
+        storage.emit.calledWith('model.destroy.geo').should.be.true
       })
 
     })

@@ -30,7 +30,7 @@
   "homepage": "https://github.com/nxus/storage",
   "dependencies": {
     "bluebird": "^3.0.6",
-    "nxus-core": "^4",
+    "nxus-core": "^4.0.0-0",
     "traverse": "^0.6.6",
     "underscore": "^1.8.3",
     "waterline": "^0.12.2",

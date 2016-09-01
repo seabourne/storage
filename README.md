@@ -1,5 +1,23 @@
 # nxus-storage
 
+## HasModels
+
+The HasModels class is a Base class for defining helper classes with Models.
+
+### modelNames
+
+Override to define the model names to access
+
+**Examples**
+
+```javascript
+modelNames() { 
+  return ['user']
+}
+```
+
+Returns **([array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) \| [object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object))** Model identities to add to this.models, or object of {identity: name}
+
 ## 
 
 [![Build Status](https://travis-ci.org/nxus/storage.svg?branch=master)](https://travis-ci.org/nxus/storage)
@@ -36,19 +54,29 @@ Inherit your models from BaseModel
       }
     })
 
+## Register models
+
+Either import your model class and pass it to `model()`:
+
+    storage.model(modelClass)
+
+Or register all models in a directory with `modelDir()`:
+
+    storage.modelDir(__dirname+"/models")
+
 ## Model events
 
 The storage model emits events for create, update, and destroy, you can register a handler for all events:
 
-      app.get('storage').on('model.create', (identity, record) => {})
-      app.get('storage').on('model.update', (identity, record) => {})
-      app.get('storage').on('model.destroy', (identity, record) => {})
+      storage.on('model.create', (identity, record) => {})
+      storage.on('model.update', (identity, record) => {})
+      storage.on('model.destroy', (identity, record) => {})
 
 Or just a specific model identity:
 
-      app.get('storage').on('model.create.user', (identity, record) => {})
-      app.get('storage').on('model.update.user', (identity, record) => {})
-      app.get('storage').on('model.destroy.user', (identity, record) => {})
+      storage.on('model.create.user', (identity, record) => {})
+      storage.on('model.update.user', (identity, record) => {})
+      storage.on('model.destroy.user', (identity, record) => {})
 
 ## Lifecycle notes
 
@@ -58,13 +86,13 @@ Or just a specific model identity:
               identity: 'user',
               ...
             });
-            app.get('storage').model(User)
+            application.get('storage').model(User)
 -   `startup`
 
     -   The configured database is connected during `load.after`
     -   You can query models from `startup` and beyond, retrieve the model by the 'identity':
 
-            app.get('storage').getModel('user').then((User) => {
+            application.get('storage').getModel('user').then((User) => {
                 User.create(...);
             });
 
@@ -74,27 +102,13 @@ Or just a specific model identity:
 
 ## Storage
 
+**Extends NxusModule**
+
 Storage provides a common interface for defining models.  Uses the Waterline ORM.
-
-### getModel
-
-Request a model based on its identity (name)
-
-**Parameters**
-
--   `id` **([string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)\|[array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array))** The identity of a registered model, or array of identities
-
-**Examples**
-
-```javascript
-app.get('storage').getModel('user')
-```
-
-Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)** The model class(es)
 
 ### model
 
-Provide a model
+Register a model
 
 **Parameters**
 
@@ -103,23 +117,37 @@ Provide a model
 **Examples**
 
 ```javascript
-app.get('storage').model(...)
+storage.model(...)
 ```
 
-## HasModels
+### getModel
 
-The HasModels class is a Base class for defining helper classes with Models.
+Request a model based on its identity (name)
 
-### modelNames
+**Parameters**
 
-Override to define the model names to access
+-   `id` **([string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) \| [array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array))** The identity of a registered model, or array of identities
 
 **Examples**
 
 ```javascript
-modelNames() { 
-  return ['user']
-}
+storage.getModel('user')
 ```
 
-Returns **([array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)\|[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object))** Model identities to add to this.models, or object of {identity: name}
+Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)** The model class(es)
+
+### modelDir
+
+Register all models in a directory
+
+**Parameters**
+
+-   `dir` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** Directory containing model files
+
+**Examples**
+
+```javascript
+application.get('storage').model(...)
+```
+
+Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)** Array of model identities
