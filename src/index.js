@@ -190,8 +190,8 @@ class Storage extends NxusModule {
         if (m.default) {
           m = m.default
         }
-        this.provide('model', m)
         identities.push(m.prototype.identity)
+        return this.provide('model', m)
       }
     }).then(() => {
       return identities
