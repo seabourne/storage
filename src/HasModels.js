@@ -18,7 +18,7 @@ export default class HasModels extends NxusModule {
     this.models = {}
     this._model_identities = []
 
-    storage.modelDir(this._dirName+"./models").then((identities) => {
+    storage.modelDir(this._dirName+"/models").then((identities) => {
       this._model_identities = identities
     })
     
