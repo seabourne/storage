@@ -72,6 +72,17 @@ describe("Storage", () => {
       sinon.spy(storage, 'emit')
     })
     beforeEach(() => {
+      storage.config = {
+        adapters: {
+          "default": "sails-memory"
+        },
+        connections: {
+          'default': {
+            adapter: 'default'
+          }
+        }
+      }
+      
       var Dummy = BaseModel.extend({
         identity: 'dummy',
         connection: 'default',
@@ -103,7 +114,7 @@ describe("Storage", () => {
   });
   describe("Model Dir", () => {
     beforeEach(() => {
-      app.config.storage = {
+      storage.config = {
         adapters: {
           "default": "sails-memory"
         },
@@ -134,7 +145,7 @@ describe("Storage", () => {
   
   describe("Dynamic Adapter", () => {
     beforeEach(() => {
-      app.config.storage = {
+      storage.config = {
         adapters: {
           "default": "sails-memory"
         },
@@ -160,7 +171,7 @@ describe("Storage", () => {
 
   describe("Model Base class", () => {
     beforeEach(() => {
-      app.config.storage = {
+      storage.config = {
         adapters: {
           "default": "sails-memory"
         },
@@ -220,7 +231,7 @@ describe("Storage", () => {
   });
   describe("Model Geo class", () => {
     beforeEach(() => {
-      app.config.storage = {
+      storage.config = {
         adapters: {
           "default": "sails-memory"
         },
