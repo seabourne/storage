@@ -126,10 +126,9 @@ class Storage extends NxusModule {
     application.once('stop', () => {
       return this._disconnectDb();
     })
-
   }
 
-  _defaultConfig () {
+  _userConfig () {
     return {
       adapters: {
         'default': "waterline-sqlite3"
