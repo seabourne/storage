@@ -22,7 +22,7 @@ export default class HasModels extends NxusModule {
       this._model_identities = identities
     })
     
-    application.on('startup', () => {
+    application.once('startup', () => {
       let mods = this.modelNames()
       if (_.isArray(mods)) {
         mods = _.object(mods, mods)
