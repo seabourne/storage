@@ -1,23 +1,5 @@
 # nxus-storage
 
-## HasModels
-
-The HasModels class is a Base class for defining helper classes with Models.
-
-### modelNames
-
-Override to define the model names to access
-
-**Examples**
-
-```javascript
-modelNames() { 
-  return ['user']
-}
-```
-
-Returns **([array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) \| [object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object))** Model identities to add to this.models, or object of {identity: name}
-
 ## 
 
 [![Build Status](https://travis-ci.org/nxus/storage.svg?branch=master)](https://travis-ci.org/nxus/storage)
@@ -151,3 +133,27 @@ application.get('storage').model(...)
 ```
 
 Returns **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)** Array of model identities
+
+## HasModels
+
+**Extends NxusModule**
+
+The HasModels class is a Base class for defining helper classes with Models.
+All models contained in a `./models` directory will be registered automatically, and are the
+default list of model identities made available in the `this.models` object.
+You may override or extend this list of model identities, or a mapping of model identities to variable names,
+by overriding `.modelNames()`
+
+### modelNames
+
+Override to define the model names to access
+
+**Examples**
+
+```javascript
+modelNames() { 
+  return ['user']
+}
+```
+
+Returns **([array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) \| [object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object))** Model identities to add to this.models, or object of {identity: name}
