@@ -27,12 +27,12 @@ export default class HasModels extends NxusModule {
       if (_.isArray(mods)) {
         mods = _.object(mods, mods)
       }
-      for (let id in mods) {
-        storage.getModel(id).then((model) => {
+      return Promise.all(Object.keys(mods).map((id) => {
+        return storage.getModel(id).then((model) => {
           this.models[id] = model;
           this.models[mods[id]] = model;
         })
-      }
+      }))
     })
   }
 
