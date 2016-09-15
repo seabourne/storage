@@ -13,8 +13,9 @@ import {storage} from './index'
  * 
  */
 export default class HasModels extends NxusModule {
-  constructor() {
+  constructor({modelNames = null}={}) {
     super()
+    this._modelNames = modelNames
     this.models = {}
     this._model_identities = []
 
@@ -44,6 +45,6 @@ export default class HasModels extends NxusModule {
    * }
    */
   modelNames () {
-    return this._model_identities
+    return this.modelNames || this._model_identities
   }
 }
