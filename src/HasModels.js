@@ -13,7 +13,7 @@ import {storage} from './index'
  * 
  */
 export default class HasModels extends NxusModule {
-  constructor({modelNames = null}={}) {
+  constructor({modelNames=null}={}) {
     super()
     this._modelNames = modelNames
     this.models = {}
@@ -38,13 +38,13 @@ export default class HasModels extends NxusModule {
   }
 
   /**
-   * Override to define the model names to access
+   * Deprecated: Override to define the model names to access
    * @return {array|object} Model identities to add to this.models, or object of {identity: name}
    * @example modelNames() { 
    *   return ['user']
    * }
    */
   modelNames () {
-    return this.modelNames || this._model_identities
+    return this._modelNames || this._model_identities
   }
 }
