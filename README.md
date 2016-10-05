@@ -148,7 +148,7 @@ by overriding `.modelNames()`
 
 ### modelNames
 
-Override to define the model names to access
+Deprecated: Override to define the model names to access
 
 **Examples**
 
