@@ -63,23 +63,34 @@ export default BaseModel.extend({
     this.native((err, collection) => {
       var index = {}
       index[this.geometryFeatureField] = '2dsphere'
-      collection.ensureIndex(index, () => {})
+      collection.ensureIndex(index, (err) => {
+        if (this.storageModule) {
+          this.storageModule.log.debug("Create index on", this.identity, this.geometryFeatureField)
+          if (err) {
+            this.storageModule.log.error("Create index error", err.message)
+          }
+        }
+      })
     })
   },
 
 
   findWithin: function(coordinates, query={}) {
-    return this._geoFind('$geoWithin', coordinates, query)
+    return this._geoFind('$geoWithin', {$geometry: coordinates}, query)
   },
 
   findIntersects: function(coordinates, query={}) {
-    return this._geoFind('$geoIntersects', coordinates, query)
+    return this._geoFind('$geoIntersects', {$geometry: coordinates}, query)
+  },
+
+  findNear: function(coordinates, maxDistance=1000, minDistance=0, query={}) {
+    return this._geoFind('$near', {$geometry: coordinates, $maxDistance: maxDistance, $minDistance: minDistance}, query)
   },
   
   _geoFind: function(op, coordinates, query={}) {
     let geo_query = _.extend(query, {})
     geo_query[this.geometryFeatureField] = {}
-    geo_query[this.geometryFeatureField][op] = {$geometry: coordinates}
+    geo_query[this.geometryFeatureField][op] = coordinates
     return new Promise((resolve, reject) => {
       this.native((err, collection) => {
         if(err) { reject(err) }
