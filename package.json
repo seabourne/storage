@@ -34,7 +34,7 @@
     "nxus-core": "^4.0.0-0",
     "traverse": "^0.6.6",
     "underscore": "^1.8.3",
-    "waterline": "https://github.com/seabourne/waterline.git#913458fafd51d4ebb0fec8371d259d4c68ace786",
+    "waterline": "https://github.com/seabourne/waterline.git#toObject-fix",
     "waterline-sqlite3": "^1.0.3"
   },
   "devDependencies": {
